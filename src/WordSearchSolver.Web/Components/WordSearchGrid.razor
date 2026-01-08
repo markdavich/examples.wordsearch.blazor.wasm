@@ -11,31 +11,6 @@
     else
     {
         <div class="grid-wrapper">
-            <svg class="circle-overlay" viewBox="0 0 @(GetCols() * 40) @(GetRows() * 40)">
-                @if (ShowCircles)
-                {
-                    @foreach (var circle in Circles)
-                    {
-                        var (cx, cy, width, height, angle) = CalculateStadium(circle.Start, circle.End);
-                        var rx = height / 2; // Rounded corners = half height for stadium shape
-                        <rect
-                            x="@(-width / 2)"
-                            y="@(-height / 2)"
-                            width="@width"
-                            height="@height"
-                            rx="@rx"
-                            ry="@rx"
-                            transform="translate(@cx, @cy) rotate(@angle)"
-                            fill="none"
-                            stroke="@circle.Color"
-                            stroke-width="2"
-                            class="answer-circle"
-                            @onmouseenter="() => HandleCircleEnter(circle.Answer)"
-                            @onmouseleave="HandleCircleLeave" />
-                    }
-                }
-            </svg>
-
             <div class="letter-grid" style="grid-template-columns: repeat(@GetCols(), 1fr);">
                 @for (var row = 0; row < GetRows(); row++)
                 {
@@ -44,23 +19,48 @@
                         var r = row;
                         var c = col;
                         var highlightColor = GetHighlightColor(r, c);
-                        <div class="grid-cell @(highlightColor != null ? "highlighted" : "")"
+                        var isElevated = IsCellElevated(r, c);
+                        <div class="grid-cell @(highlightColor != null ? "highlighted" : "") @(isElevated ? "elevated" : "")"
                              style="@(highlightColor != null ? $"background-color: {highlightColor};" : "")">
                             @Letters[r, c]
                         </div>
                     }
                 }
             </div>
+
+            @if (ShowCircles && Circles.Count > 0)
+            {
+                <svg class="circle-overlay" width="@(GetCols() * CellSize)" height="@(GetRows() * CellSize)">
+                    @foreach (var circle in GetSortedCircles())
+                    {
+                        var isHovered = circle.Answer == _hoveredCircle;
+                        var path = GetStadiumPath(circle);
+                        <path
+                            d="@path"
+                            stroke="@circle.Color"
+                            stroke-width="@(isHovered ? 5 : 3)"
+                            fill="@(isHovered ? circle.Color : "none")"
+                            fill-opacity="@(isHovered ? 0.3 : 0)"
+                            class="answer-circle @(isHovered ? "hovered" : "")"
+                            @onmouseenter="() => HandleCircleEnter(circle.Answer)"
+                            @onmouseleave="HandleCircleLeave" />
+                    }
+                </svg>
+            }
         </div>
     }
 </div>
 
 @code {
+    private const double CellSize = 40;
+
     [Parameter] public char[,]? Letters { get; set; }
     [Parameter] public List<HighlightedCell> HighlightedCells { get; set; } = new();
     [Parameter] public List<CircleData> Circles { get; set; } = new();
     [Parameter] public bool ShowCircles { get; set; }
     [Parameter] public EventCallback<string?> OnCircleHover { get; set; }
+
+    private string? _hoveredCircle;
 
     private int GetRows() => Letters?.GetLength(0) ?? 0;
     private int GetCols() => Letters?.GetLength(1) ?? 0;
@@ -71,39 +71,100 @@
         return cell?.Color;
     }
 
-    private (double cx, double cy, double width, double height, double angle) CalculateStadium(
-        GridCoordinate start, GridCoordinate end)
+    private bool IsCellElevated(int row, int col)
     {
-        const double cellSize = 40;
-        const double padding = 8;
+        if (_hoveredCircle == null) return false;
 
-        var startX = start.Col * cellSize + cellSize / 2;
-        var startY = start.Row * cellSize + cellSize / 2;
-        var endX = end.Col * cellSize + cellSize / 2;
-        var endY = end.Row * cellSize + cellSize / 2;
+        var circle = Circles.FirstOrDefault(c => c.Answer == _hoveredCircle);
+        if (circle == null) return false;
 
-        var cx = (startX + endX) / 2;
-        var cy = (startY + endY) / 2;
+        // Calculate all cells along the line from start to end
+        var startRow = circle.Start.Row;
+        var startCol = circle.Start.Col;
+        var endRow = circle.End.Row;
+        var endCol = circle.End.Col;
 
+        var rowStep = endRow == startRow ? 0 : (endRow > startRow ? 1 : -1);
+        var colStep = endCol == startCol ? 0 : (endCol > startCol ? 1 : -1);
+
+        var r = startRow;
+        var c = startCol;
+
+        while (true)
+        {
+            if (r == row && c == col) return true;
+            if (r == endRow && c == endCol) break;
+            r += rowStep;
+            c += colStep;
+        }
+
+        return false;
+    }
+
+    private IEnumerable<CircleData> GetSortedCircles()
+    {
+        if (_hoveredCircle == null) return Circles;
+
+        var others = Circles.Where(c => c.Answer != _hoveredCircle);
+        var hovered = Circles.FirstOrDefault(c => c.Answer == _hoveredCircle);
+
+        return hovered != null ? others.Append(hovered) : Circles;
+    }
+
+    private string GetStadiumPath(CircleData circle)
+    {
+        // Get center points of start and end cells
+        var startX = (circle.Start.Col + 0.5) * CellSize;
+        var startY = (circle.Start.Row + 0.5) * CellSize;
+        var endX = (circle.End.Col + 0.5) * CellSize;
+        var endY = (circle.End.Row + 0.5) * CellSize;
+
+        // Calculate the angle of the word
         var dx = endX - startX;
         var dy = endY - startY;
-        var length = Math.Sqrt(dx * dx + dy * dy);
+        var angle = Math.Atan2(dy, dx);
 
-        var width = length + cellSize + padding;
-        var height = cellSize + padding;
+        // Radius for the semicircle ends (half cell height with padding) - tighter like Vue app
+        var r = CellSize * 0.38;
 
-        var angle = Math.Atan2(dy, dx) * 180 / Math.PI;
+        // Perpendicular offset for the parallel lines
+        var perpX = Math.Sin(angle) * r;
+        var perpY = -Math.Cos(angle) * r;
 
-        return (cx, cy, width, height, angle);
+        // Extend start and end points outward by a small amount for padding
+        var padding = CellSize * 0.05;
+        var extendX = Math.Cos(angle) * padding;
+        var extendY = Math.Sin(angle) * padding;
+
+        var sx = startX - extendX;
+        var sy = startY - extendY;
+        var ex = endX + extendX;
+        var ey = endY + extendY;
+
+        // Four corners of the stadium (two parallel lines)
+        var topStartX = sx + perpX;
+        var topStartY = sy + perpY;
+        var topEndX = ex + perpX;
+        var topEndY = ey + perpY;
+        var bottomEndX = ex - perpX;
+        var bottomEndY = ey - perpY;
+        var bottomStartX = sx - perpX;
+        var bottomStartY = sy - perpY;
+
+        // Build the path using invariant culture for decimal formatting
+        return string.Create(System.Globalization.CultureInfo.InvariantCulture,
+            $"M {topStartX} {topStartY} L {topEndX} {topEndY} A {r} {r} 0 0 1 {bottomEndX} {bottomEndY} L {bottomStartX} {bottomStartY} A {r} {r} 0 0 1 {topStartX} {topStartY} Z");
     }
 
     private async Task HandleCircleEnter(string answer)
     {
+        _hoveredCircle = answer;
         await OnCircleHover.InvokeAsync(answer);
     }
 
     private async Task HandleCircleLeave()
     {
+        _hoveredCircle = null;
         await OnCircleHover.InvokeAsync(null);
     }
 }
