@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="8.0.22" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="8.0.22" PrivateAssets="all" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\WordSearchSolver.Domain\WordSearchSolver.Domain.csproj" />
+    <ProjectReference Include="..\WordSearchSolver.Application\WordSearchSolver.Application.csproj" />
+    <ProjectReference Include="..\WordSearchSolver.Infrastructure\WordSearchSolver.Infrastructure.csproj" />
+  </ItemGroup>
+
+</Project>

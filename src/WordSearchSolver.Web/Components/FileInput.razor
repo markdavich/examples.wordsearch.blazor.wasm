@@ -1,0 +1,45 @@
+@using Microsoft.AspNetCore.Components.Forms
+
+<div class="file-input-container">
+    <label class="file-input-label">@Label</label>
+    <InputFile OnChange="HandleFileChange" accept=".wordsearch,.txt" class="file-input" />
+    @if (!string.IsNullOrEmpty(_fileName))
+    {
+        <span class="file-name">@_fileName</span>
+    }
+    @if (!string.IsNullOrEmpty(_error))
+    {
+        <span class="file-error">@_error</span>
+    }
+</div>
+
+@code {
+    [Parameter] public EventCallback<string> OnFileSelected { get; set; }
+    [Parameter] public string Label { get; set; } = "Select File";
+
+    private string? _fileName;
+    private string? _error;
+
+    private async Task HandleFileChange(InputFileChangeEventArgs e)
+    {
+        _error = null;
+        _fileName = null;
+
+        try
+        {
+            var file = e.File;
+            _fileName = file.Name;
+
+            using var stream = file.OpenReadStream(maxAllowedSize: 1024 * 1024); // 1MB max
+            using var reader = new StreamReader(stream);
+            var content = await reader.ReadToEndAsync();
+
+            await OnFileSelected.InvokeAsync(content);
+        }
+        catch (Exception ex)
+        {
+            _error = $"Error reading file: {ex.Message}";
+            Console.WriteLine(_error);
+        }
+    }
+}

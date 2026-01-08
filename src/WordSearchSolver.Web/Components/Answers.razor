@@ -1,0 +1,38 @@
+@using WordSearchSolver.Domain.Entities
+
+<div class="answers-container">
+    <h4>Found Answers</h4>
+    @if (Matches.Count == 0)
+    {
+        <p class="no-answers">No answers found</p>
+    }
+    else
+    {
+        <ul class="answer-list">
+            @foreach (var match in Matches)
+            {
+                var answerKey = match.ToString();
+                var isHighlighted = HighlightedAnswers.ContainsKey(answerKey);
+                var highlightColor = isHighlighted ? HighlightedAnswers[answerKey] : null;
+
+                <li class="answer-item @(isHighlighted ? "highlighted" : "")"
+                    style="@(isHighlighted ? $"border-left-color: {highlightColor};" : "")"
+                    @onclick="() => SelectAnswer(match)">
+                    <span class="answer-word">@match.Word</span>
+                    <span class="answer-coords">(@match.Start) to (@match.End)</span>
+                </li>
+            }
+        </ul>
+    }
+</div>
+
+@code {
+    [Parameter] public List<Match> Matches { get; set; } = new();
+    [Parameter] public Dictionary<string, string> HighlightedAnswers { get; set; } = new();
+    [Parameter] public EventCallback<Match> OnAnswerSelected { get; set; }
+
+    private async Task SelectAnswer(Match match)
+    {
+        await OnAnswerSelected.InvokeAsync(match);
+    }
+}

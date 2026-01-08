@@ -1,0 +1,33 @@
+<div class="words-to-find-container">
+    <h4>Words to Find</h4>
+    @if (Words.Count == 0)
+    {
+        <p class="no-words">No puzzle loaded</p>
+    }
+    else
+    {
+        <ul class="word-list">
+            @foreach (var word in Words)
+            {
+                <li class="word-item @(IsSelected(word) ? "selected" : "")"
+                    @onclick="() => SelectWord(word)">
+                    @word
+                </li>
+            }
+        </ul>
+    }
+</div>
+
+@code {
+    [Parameter] public List<string> Words { get; set; } = new();
+    [Parameter] public string? SelectedWord { get; set; }
+    [Parameter] public EventCallback<string> OnWordSelected { get; set; }
+
+    private bool IsSelected(string word) =>
+        SelectedWord?.Equals(word, StringComparison.OrdinalIgnoreCase) ?? false;
+
+    private async Task SelectWord(string word)
+    {
+        await OnWordSelected.InvokeAsync(word);
+    }
+}

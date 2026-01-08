@@ -1,0 +1,32 @@
+.file-input-container {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.file-input-label {
+    font-weight: 600;
+    color: #333;
+}
+
+.file-input {
+    padding: 0.5rem;
+    border: 2px dashed #ccc;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.file-input:hover {
+    border-color: #1b6ec2;
+}
+
+.file-name {
+    font-size: 0.875rem;
+    color: #666;
+}
+
+.file-error {
+    font-size: 0.875rem;
+    color: #dc3545;
+}

@@ -1,0 +1,225 @@
+@page "/"
+@using WordSearchSolver.Application.Interfaces
+@using WordSearchSolver.Domain.Entities
+@using WordSearchSolver.Domain.ValueObjects
+@using WordSearchSolver.Web.Components
+
+<div class="word-search-container">
+    <div class="left-column">
+        <FileInput OnFileSelected="HandleFileSelected" Label="Word Search File" />
+
+        <AIUpload
+            OnPuzzleParsed="HandlePuzzleParsed"
+            Platform="@_selectedPlatform"
+            AiProvider="@_selectedAiProvider"
+            OnPlatformChanged="HandlePlatformChanged"
+            OnAiProviderChanged="HandleAiProviderChanged" />
+
+        <div class="button-row">
+            <button class="action-btn" @onclick="ClearHighlights">Clear Highlights</button>
+            <button class="action-btn" @onclick="ToggleCircles">Circle Answers</button>
+        </div>
+
+        <WordsToFind
+            Words="@_words"
+            SelectedWord="@_selectedWord"
+            OnWordSelected="HandleWordSelected" />
+
+        <Answers
+            Matches="@_matches"
+            HighlightedAnswers="@_highlightedAnswers"
+            OnAnswerSelected="HandleAnswerSelected" />
+    </div>
+
+    <div class="right-column">
+        <WordSearchGrid
+            Letters="@_letters"
+            HighlightedCells="@_highlightedCells"
+            Circles="@_circleData"
+            ShowCircles="@_showCircles"
+            OnCircleHover="HandleCircleHover" />
+    </div>
+</div>
+
+@code {
+    [Inject] private IWordFinder WordFinder { get; set; } = default!;
+
+    private char[,]? _letters;
+    private List<string> _words = new();
+    private List<Match> _matches = new();
+    private Dictionary<string, string> _normalizedToOriginal = new();
+    private string? _selectedWord;
+    private string _selectedPlatform = "cloudflare";
+    private string _selectedAiProvider = "groq";
+    private Dictionary<string, string> _highlightedAnswers = new();
+    private List<HighlightedCell> _highlightedCells = new();
+    private bool _showCircles = false;
+    private List<CircleData> _circleData = new();
+    private string? _hoveredCircle;
+
+    private static readonly string[] ColorPalette =
+    {
+        "#FF6B6B", "#FF9F43", "#FECA57", "#48DBFB",
+        "#1DD1A1", "#5F27CD", "#FF6B9D", "#00D2D3"
+    };
+
+    private void HandleFileSelected(string content)
+    {
+        try
+        {
+            var puzzle = WordSearch.Parse(content);
+            _letters = puzzle.Letters;
+            _words = puzzle.Words.ToList();
+
+            // Create mapping from normalized (no spaces) to original words
+            _normalizedToOriginal = _words.ToDictionary(
+                w => w.Replace(" ", "").ToUpperInvariant(),
+                w => w,
+                StringComparer.OrdinalIgnoreCase);
+
+            // Search using normalized words (spaces removed)
+            var normalizedWords = _words.Select(w => w.Replace(" ", "")).ToList();
+            _matches = WordFinder.FindWords(_letters, normalizedWords).ToList();
+
+            ClearHighlights();
+            _circleData = BuildCircleData();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error parsing file: {ex.Message}");
+        }
+    }
+
+    private void HandlePuzzleParsed(string content)
+    {
+        HandleFileSelected(content);
+    }
+
+    private void HandlePlatformChanged(string platform)
+    {
+        _selectedPlatform = platform;
+        if (platform != "cloudflare" && _selectedAiProvider == "cloudflare-ai")
+        {
+            _selectedAiProvider = "groq";
+        }
+    }
+
+    private void HandleAiProviderChanged(string provider)
+    {
+        _selectedAiProvider = provider;
+    }
+
+    private void HandleWordSelected(string word)
+    {
+        ClearHighlights();
+        _selectedWord = word.ToUpperInvariant().Replace(" ", "");
+
+        var matchingAnswers = _matches
+            .Where(m => m.Word.Equals(_selectedWord, StringComparison.OrdinalIgnoreCase))
+            .ToList();
+
+        for (var i = 0; i < matchingAnswers.Count; i++)
+        {
+            var color = ColorPalette[i % ColorPalette.Length];
+            _highlightedAnswers[matchingAnswers[i].ToString()] = color;
+        }
+
+        UpdateHighlightedCells();
+    }
+
+    private void HandleAnswerSelected(Match answer)
+    {
+        ClearHighlights();
+        _selectedWord = answer.Word;
+        var color = ColorPalette[0];
+        _highlightedAnswers[answer.ToString()] = color;
+        UpdateHighlightedCells();
+    }
+
+    private void ClearHighlights()
+    {
+        _selectedWord = null;
+        _highlightedAnswers.Clear();
+        _highlightedCells.Clear();
+        _hoveredCircle = null;
+    }
+
+    private void ToggleCircles()
+    {
+        _showCircles = !_showCircles;
+        if (!_showCircles)
+        {
+            _hoveredCircle = null;
+            ClearHighlights();
+        }
+    }
+
+    private void HandleCircleHover(string? answer)
+    {
+        _hoveredCircle = answer;
+        if (answer != null)
+        {
+            var match = _matches.FirstOrDefault(m => m.ToString() == answer);
+            if (match != null)
+            {
+                ClearHighlights();
+                _selectedWord = match.Word;
+                var idx = _matches.FindIndex(m => m.ToString() == answer);
+                var color = ColorPalette[idx % ColorPalette.Length];
+                _highlightedAnswers[answer] = color;
+                UpdateHighlightedCells();
+            }
+        }
+    }
+
+    private void UpdateHighlightedCells()
+    {
+        _highlightedCells.Clear();
+
+        foreach (var (answer, color) in _highlightedAnswers)
+        {
+            var match = _matches.FirstOrDefault(m => m.ToString() == answer);
+            if (match != null)
+            {
+                foreach (var coord in match.GetPath())
+                {
+                    _highlightedCells.Add(new HighlightedCell(coord.Row, coord.Col, color));
+                }
+            }
+        }
+    }
+
+    private List<CircleData> BuildCircleData()
+    {
+        var result = new List<CircleData>();
+
+        for (var i = 0; i < _matches.Count; i++)
+        {
+            var match = _matches[i];
+            var color = ColorPalette[i % ColorPalette.Length];
+            // Get original word with spaces for display
+            var displayWord = _normalizedToOriginal.TryGetValue(match.Word, out var original)
+                ? original
+                : match.Word;
+            result.Add(new CircleData(
+                match.ToString(),
+                displayWord,
+                match.Start,
+                match.End,
+                color
+            ));
+        }
+
+        return result;
+    }
+
+    private string GetDisplayWord(string normalizedWord)
+    {
+        return _normalizedToOriginal.TryGetValue(normalizedWord, out var original)
+            ? original
+            : normalizedWord;
+    }
+
+    public record HighlightedCell(int Row, int Col, string Color);
+    public record CircleData(string Answer, string Word, GridCoordinate Start, GridCoordinate End, string Color);
+}

@@ -1,0 +1,37 @@
+@page "/about"
+
+<div class="about-page">
+    <h1>About Alphabet Soup</h1>
+
+    <p>
+        Alphabet Soup is a word search puzzle solver built with <strong>Blazor WebAssembly</strong>
+        following <strong>Clean Architecture</strong> principles.
+    </p>
+
+    <h2>Features</h2>
+    <ul>
+        <li>Upload word search puzzles from text files</li>
+        <li>AI-powered image parsing (via Cloudflare Workers or Vercel)</li>
+        <li>Automatic word finding in all directions</li>
+        <li>Visual highlighting of found words</li>
+        <li>Circle overlay visualization</li>
+    </ul>
+
+    <h2>Architecture</h2>
+    <p>This application follows Clean Architecture with four layers:</p>
+    <ul>
+        <li><strong>Domain:</strong> Core business entities (WordSearch, Match, GridCoordinate)</li>
+        <li><strong>Application:</strong> Use cases and interfaces (IWordFinder, word finding services)</li>
+        <li><strong>Infrastructure:</strong> External services (API client, file conversion)</li>
+        <li><strong>Web:</strong> Blazor WASM presentation layer</li>
+    </ul>
+
+    <h2>SOLID Principles</h2>
+    <ul>
+        <li><strong>S:</strong> Each class has a single responsibility</li>
+        <li><strong>O:</strong> Open for extension (new finders), closed for modification</li>
+        <li><strong>L:</strong> All finders are substitutable via IDirectionalFinder</li>
+        <li><strong>I:</strong> Small, focused interfaces</li>
+        <li><strong>D:</strong> UI depends on abstractions, not implementations</li>
+    </ul>
+</div>
