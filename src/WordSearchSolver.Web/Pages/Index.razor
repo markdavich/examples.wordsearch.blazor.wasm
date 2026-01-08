@@ -157,19 +157,8 @@
     private void HandleCircleHover(string? answer)
     {
         _hoveredCircle = answer;
-        if (answer != null)
-        {
-            var match = _matches.FirstOrDefault(m => m.ToString() == answer);
-            if (match != null)
-            {
-                ClearHighlights();
-                _selectedWord = match.Word;
-                var idx = _matches.FindIndex(m => m.ToString() == answer);
-                var color = ColorPalette[idx % ColorPalette.Length];
-                _highlightedAnswers[answer] = color;
-                UpdateHighlightedCells();
-            }
-        }
+        // Stadium fill is handled by the WordSearchGrid component
+        // No cell highlighting needed on hover
     }
 
     private void UpdateHighlightedCells()
