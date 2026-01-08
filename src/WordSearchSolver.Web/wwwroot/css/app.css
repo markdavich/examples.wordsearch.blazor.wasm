@@ -110,11 +110,15 @@ code {
     padding: 1rem;
     max-width: 1400px;
     margin: 0 auto;
+    height: calc(100vh - 60px);
+    min-height: 600px;
 }
 
 .left-column {
     display: flex;
     flex-direction: column;
+    height: 100%;
+    overflow: hidden;
 }
 
 .right-column {

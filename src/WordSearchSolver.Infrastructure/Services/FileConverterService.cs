@@ -13,21 +13,42 @@ public sealed class FileConverterService : IFileConverter
         "image/jpeg",
         "image/jpg",
         "image/webp",
-        "image/gif"
+        "image/gif",
+        "image/bmp",
+        "image/tiff"
     };
 
     private static readonly HashSet<string> DocumentTypes = new(StringComparer.OrdinalIgnoreCase)
     {
+        // Text formats
         "text/plain",
         "text/csv",
+        "text/html",
+        "application/json",
+        // Office formats
         "application/pdf",
-        "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.document", // .docx
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", // .xlsx
+        "application/msword", // .doc
+        "application/vnd.ms-excel", // .xls
+        // Other
+        "application/xml",
+        "text/xml"
     };
 
     private static readonly HashSet<string> PlainTextTypes = new(StringComparer.OrdinalIgnoreCase)
     {
         "text/plain",
-        "text/csv"
+        "text/csv",
+        "text/html",
+        "application/json",
+        "application/xml",
+        "text/xml"
+    };
+
+    private static readonly HashSet<string> PlainTextExtensions = new(StringComparer.OrdinalIgnoreCase)
+    {
+        ".txt", ".csv", ".html", ".htm", ".json", ".xml", ".md", ".markdown"
     };
 
     public async Task<string> ToBase64Async(Stream fileStream)
@@ -49,7 +70,7 @@ public sealed class FileConverterService : IFileConverter
             return true;
 
         var extension = Path.GetExtension(fileName).ToLowerInvariant();
-        return extension is ".txt" or ".csv";
+        return PlainTextExtensions.Contains(extension);
     }
 
     public bool IsImageFile(string mimeType)

@@ -29,8 +29,8 @@
     </div>
 
     <div class="file-upload-area">
-        <InputFile OnChange="HandleFileChange" accept="image/*,.pdf,.docx" class="file-input-ai" />
-        <p class="upload-hint">Upload an image or document of a word search puzzle</p>
+        <InputFile OnChange="HandleFileChange" accept="image/*,.pdf,.docx,.doc,.xlsx,.xls,.txt,.csv,.html,.htm,.json,.xml" class="file-input-ai" />
+        <p class="upload-hint">Upload an image or document (PDF, Word, Excel, HTML, JSON, TXT, etc.)</p>
     </div>
 
     @if (_isLoading)
@@ -97,7 +97,7 @@
 
             if (!FileConverter.IsSupportedFile(file.ContentType))
             {
-                _error = "Unsupported file type. Please upload an image or PDF.";
+                _error = "Unsupported file type. Please upload an image or supported document format.";
                 return;
             }
 

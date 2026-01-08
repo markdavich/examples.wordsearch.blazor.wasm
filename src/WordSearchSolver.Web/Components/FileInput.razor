@@ -1,8 +1,19 @@
 @using Microsoft.AspNetCore.Components.Forms
+@inject HttpClient Http
 
 <div class="file-input-container">
     <label class="file-input-label">@Label</label>
-    <InputFile OnChange="HandleFileChange" accept=".wordsearch,.txt" class="file-input" />
+    <div class="file-input-row">
+        <InputFile OnChange="HandleFileChange" accept=".wordsearch,.txt" class="file-input" />
+        <span class="or-separator">or</span>
+        <select class="example-select" @onchange="HandleExampleSelected">
+            <option value="">Load Example...</option>
+            @foreach (var example in ExampleFiles)
+            {
+                <option value="@example.Path">@example.Name</option>
+            }
+        </select>
+    </div>
     @if (!string.IsNullOrEmpty(_fileName))
     {
         <span class="file-name">@_fileName</span>
@@ -19,6 +30,15 @@
 
     private string? _fileName;
     private string? _error;
+
+    private static readonly List<(string Name, string Path)> ExampleFiles = new()
+    {
+        ("Animals", "assets/animals.txt"),
+        ("Fruits", "assets/fruits.txt"),
+        ("Colors", "assets/colors.txt"),
+        ("Programming Languages", "assets/programming.txt"),
+        ("Countries", "assets/countries.txt")
+    };
 
     private async Task HandleFileChange(InputFileChangeEventArgs e)
     {
@@ -39,6 +59,28 @@
         catch (Exception ex)
         {
             _error = $"Error reading file: {ex.Message}";
+            Console.WriteLine(_error);
+        }
+    }
+
+    private async Task HandleExampleSelected(ChangeEventArgs e)
+    {
+        var path = e.Value?.ToString();
+        if (string.IsNullOrEmpty(path))
+            return;
+
+        _error = null;
+        _fileName = null;
+
+        try
+        {
+            var content = await Http.GetStringAsync(path);
+            _fileName = Path.GetFileName(path);
+            await OnFileSelected.InvokeAsync(content);
+        }
+        catch (Exception ex)
+        {
+            _error = $"Error loading example: {ex.Message}";
             Console.WriteLine(_error);
         }
     }
