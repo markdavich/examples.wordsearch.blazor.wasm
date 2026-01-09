@@ -26,9 +26,9 @@
 }
 
 .answer-circle {
-    pointer-events: stroke;
+    pointer-events: all;
     cursor: pointer;
-    transition: stroke-width 0.2s, fill-opacity 0.2s;
+    transition: stroke-width 0.2s, fill-opacity 0.2s, filter 0.2s;
 }
 
 .answer-circle.hovered {

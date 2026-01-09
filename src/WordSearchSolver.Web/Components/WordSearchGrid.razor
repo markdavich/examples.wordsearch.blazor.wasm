@@ -31,7 +31,7 @@
             @if (ShowCircles && Circles.Count > 0)
             {
                 <svg class="circle-overlay" width="@(GetCols() * CellSize)" height="@(GetRows() * CellSize)">
-                    @foreach (var circle in GetSortedCircles())
+                    @foreach (var circle in Circles)
                     {
                         var isHovered = circle.Answer == _hoveredCircle;
                         var path = GetStadiumPath(circle);
@@ -39,8 +39,9 @@
                             d="@path"
                             stroke="@circle.Color"
                             stroke-width="@(isHovered ? 5 : 3)"
-                            fill="@(isHovered ? circle.Color : "none")"
+                            fill="@circle.Color"
                             fill-opacity="@(isHovered ? 0.3 : 0)"
+                            style="@(isHovered ? "filter: drop-shadow(0 0 2px rgba(0,0,0,0.3));" : "")"
                             class="answer-circle @(isHovered ? "hovered" : "")"
                             @onmouseenter="() => HandleCircleEnter(circle.Answer)"
                             @onmouseleave="HandleCircleLeave" />
@@ -99,16 +100,6 @@
         }
 
         return false;
-    }
-
-    private IEnumerable<CircleData> GetSortedCircles()
-    {
-        if (_hoveredCircle == null) return Circles;
-
-        var others = Circles.Where(c => c.Answer != _hoveredCircle);
-        var hovered = Circles.FirstOrDefault(c => c.Answer == _hoveredCircle);
-
-        return hovered != null ? others.Append(hovered) : Circles;
     }
 
     private string GetStadiumPath(CircleData circle)
