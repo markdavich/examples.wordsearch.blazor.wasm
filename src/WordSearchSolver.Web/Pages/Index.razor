@@ -69,7 +69,7 @@
         {
             var puzzle = WordSearch.Parse(content);
             _letters = puzzle.Letters;
-            _words = puzzle.Words.ToList();
+            _words = puzzle.Words.OrderBy(w => w, StringComparer.OrdinalIgnoreCase).ToList();
 
             // Create mapping from normalized (no spaces) to original words
             _normalizedToOriginal = _words.ToDictionary(
@@ -79,7 +79,9 @@
 
             // Search using normalized words (spaces removed)
             var normalizedWords = _words.Select(w => w.Replace(" ", "")).ToList();
-            _matches = WordFinder.FindWords(_letters, normalizedWords).ToList();
+            _matches = WordFinder.FindWords(_letters, normalizedWords)
+                .OrderBy(m => m.Word, StringComparer.OrdinalIgnoreCase)
+                .ToList();
 
             ClearHighlights();
             _circleData = BuildCircleData();
