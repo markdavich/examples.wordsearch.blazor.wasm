@@ -291,12 +291,12 @@ a:hover, .btn-link:hover {
 
 .word-search-container {
     display: grid;
-    grid-template-columns: 380px 1fr;
-    gap: var(--space-xl);
-    padding: var(--space-lg);
-    max-width: 1500px;
+    grid-template-columns: 350px 1fr;
+    gap: 2rem;
+    padding: 1rem;
+    max-width: 1400px;
     margin: 0 auto;
-    height: calc(100vh - 70px);
+    height: calc(100vh - 60px);
     min-height: 600px;
 }
 
@@ -304,20 +304,19 @@ a:hover, .btn-link:hover {
     display: flex;
     flex-direction: column;
     height: 100%;
-    overflow: visible;
-    gap: var(--space-md);
+    overflow: hidden;
 }
 
 .right-column {
     display: flex;
     justify-content: center;
     align-items: flex-start;
-    padding-top: var(--space-md);
 }
 
 .button-row {
     display: flex;
-    gap: var(--space-sm);
+    gap: 0.5rem;
+    margin-bottom: 1rem;
 }
 
 /* ============================================
@@ -445,31 +444,13 @@ code {
    Responsive Design
    ============================================ */
 
-@media (max-width: 1024px) {
-    .word-search-container {
-        grid-template-columns: 320px 1fr;
-        gap: var(--space-md);
-    }
-}
-
 @media (max-width: 900px) {
     .word-search-container {
         grid-template-columns: 1fr;
-        height: auto;
-        min-height: auto;
     }
 
     .right-column {
         order: -1;
-        min-height: 400px;
-    }
-
-    .navbar {
-        padding: var(--space-sm) var(--space-md);
-    }
-
-    .navbar-title {
-        font-size: 1.25rem;
     }
 }
 
