@@ -1,0 +1,131 @@
+@namespace WordSearch.Web.Components
+@inject IJSRuntime JS
+
+<div class="tooltip-wrapper"
+     @onmouseenter="ShowTooltip"
+     @onmouseleave="StartHideTimer"
+     @ref="_wrapperRef">
+    @ChildContent
+    @if (_visible)
+    {
+        <div class="tooltip-popup @PositionClass @_adjustedPositionClass"
+             @onmouseenter="CancelHideTimer"
+             @onmouseleave="StartHideTimer">
+            <div class="tooltip-content">
+                <strong class="tooltip-title">@Title</strong>
+                <p class="tooltip-text">@Description</p>
+                @if (!string.IsNullOrEmpty(GuideLink))
+                {
+                    <a href="@GuideLink" target="_blank" class="tooltip-link">
+                        Learn more in User Guide
+                    </a>
+                }
+            </div>
+            <div class="tooltip-arrow"></div>
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+    [Parameter] public string Title { get; set; } = "";
+    [Parameter] public string Description { get; set; } = "";
+    [Parameter] public string GuideLink { get; set; } = "";
+    [Parameter] public string Position { get; set; } = "top";
+
+    private bool _visible;
+    private System.Timers.Timer? _hideTimer;
+    private ElementReference _wrapperRef;
+    private string _adjustedPositionClass = "";
+
+    private string PositionClass => $"tooltip-{Position}";
+
+    protected override void OnInitialized()
+    {
+        _hideTimer = new System.Timers.Timer(300); // 300ms delay before hiding
+        _hideTimer.AutoReset = false;
+        _hideTimer.Elapsed += async (s, e) => await HideTooltip();
+    }
+
+    private async Task ShowTooltip()
+    {
+        CancelHideTimer();
+        _visible = true;
+
+        // Check if tooltip would go off screen and adjust
+        await Task.Delay(10); // Small delay to let DOM render
+        await AdjustPosition();
+    }
+
+    private async Task AdjustPosition()
+    {
+        try
+        {
+            var bounds = await JS.InvokeAsync<BoundingRect>("getTooltipBounds", _wrapperRef);
+            if (bounds != null)
+            {
+                _adjustedPositionClass = "";
+
+                // Check if tooltip would go off the right edge
+                if (Position == "right" && bounds.Right > bounds.WindowWidth - 280)
+                {
+                    _adjustedPositionClass = "tooltip-flip-left";
+                }
+                // Check if tooltip would go off the left edge
+                else if (Position == "left" && bounds.Left < 280)
+                {
+                    _adjustedPositionClass = "tooltip-flip-right";
+                }
+                // Check if tooltip would go off the top
+                else if (Position == "top" && bounds.Top < 150)
+                {
+                    _adjustedPositionClass = "tooltip-flip-bottom";
+                }
+                // Check if tooltip would go off the bottom
+                else if (Position == "bottom" && bounds.Bottom > bounds.WindowHeight - 150)
+                {
+                    _adjustedPositionClass = "tooltip-flip-top";
+                }
+
+                StateHasChanged();
+            }
+        }
+        catch
+        {
+            // JS interop not available, use default position
+        }
+    }
+
+    private void StartHideTimer()
+    {
+        _hideTimer?.Stop();
+        _hideTimer?.Start();
+    }
+
+    private void CancelHideTimer()
+    {
+        _hideTimer?.Stop();
+    }
+
+    private async Task HideTooltip()
+    {
+        _visible = false;
+        _adjustedPositionClass = "";
+        await InvokeAsync(StateHasChanged);
+    }
+
+    public void Dispose()
+    {
+        _hideTimer?.Dispose();
+    }
+
+    private class BoundingRect
+    {
+        public double Top { get; set; }
+        public double Left { get; set; }
+        public double Right { get; set; }
+        public double Bottom { get; set; }
+        public double WindowWidth { get; set; }
+        public double WindowHeight { get; set; }
+    }
+}

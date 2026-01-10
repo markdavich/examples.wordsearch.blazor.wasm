@@ -1,0 +1,98 @@
+@using Microsoft.AspNetCore.Components.Forms
+@inject HttpClient Http
+
+<div class="file-input-container">
+    <label class="file-input-label">@Label</label>
+    <div class="file-input-row">
+        <Tooltip Title="Upload Puzzle File"
+                 Description="Select a .txt or .wordsearch file containing the letter grid and word list."
+                 GuideLink="guide/file-format.html"
+                 Position="bottom">
+            <InputFile OnChange="HandleFileChange" accept=".wordsearch,.txt" class="file-input" />
+        </Tooltip>
+        <span class="or-separator">or</span>
+        <Tooltip Title="Load Example"
+                 Description="Choose from pre-loaded example puzzles to see how the solver works."
+                 GuideLink="guide/getting-started.html#select-an-example"
+                 Position="bottom">
+            <select class="example-select" @onchange="HandleExampleSelected">
+                <option value="">Load Example...</option>
+                @foreach (var example in ExampleFiles)
+                {
+                    <option value="@example.Path">@example.Name</option>
+                }
+            </select>
+        </Tooltip>
+    </div>
+    @if (!string.IsNullOrEmpty(_fileName))
+    {
+        <span class="file-name">@_fileName</span>
+    }
+    @if (!string.IsNullOrEmpty(_error))
+    {
+        <span class="file-error">@_error</span>
+    }
+</div>
+
+@code {
+    [Parameter] public EventCallback<string> OnFileSelected { get; set; }
+    [Parameter] public string Label { get; set; } = "Select File";
+
+    private string? _fileName;
+    private string? _error;
+
+    private static readonly List<(string Name, string Path)> ExampleFiles = new()
+    {
+        ("Ai", "assets/Ai.txt"),
+        ("GitHub", "assets/GitHub.txt"),
+        ("Enlighten", "assets/Enlighten.txt"),
+        ("ABC", "assets/ABC.txt"),
+        ("Numbers", "assets/Numbers.txt"),
+        ("Hello", "assets/Hello.txt")
+    };
+
+    private async Task HandleFileChange(InputFileChangeEventArgs e)
+    {
+        _error = null;
+        _fileName = null;
+
+        try
+        {
+            var file = e.File;
+            _fileName = file.Name;
+
+            using var stream = file.OpenReadStream(maxAllowedSize: 1024 * 1024); // 1MB max
+            using var reader = new StreamReader(stream);
+            var content = await reader.ReadToEndAsync();
+
+            await OnFileSelected.InvokeAsync(content);
+        }
+        catch (Exception ex)
+        {
+            _error = $"Error reading file: {ex.Message}";
+            Console.WriteLine(_error);
+        }
+    }
+
+    private async Task HandleExampleSelected(ChangeEventArgs e)
+    {
+        var path = e.Value?.ToString();
+        if (string.IsNullOrEmpty(path))
+            return;
+
+        _error = null;
+        _fileName = null;
+
+        try
+        {
+            var content = await Http.GetStringAsync(path);
+            _fileName = Path.GetFileName(path);
+            await OnFileSelected.InvokeAsync(content);
+        }
+        catch (Exception ex)
+        {
+            _error = $"Error loading example: {ex.Message}";
+            Console.WriteLine(_error);
+        }
+    }
+}

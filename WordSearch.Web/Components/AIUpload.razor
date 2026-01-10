@@ -1,0 +1,175 @@
+@using Microsoft.AspNetCore.Components.Forms
+@using WordSearch.Application.DTOs
+@using WordSearch.Application.Interfaces
+
+<div class="ai-upload-container">
+    <Tooltip Title="AI-Powered Upload"
+             Description="Upload an image or document of a word search puzzle. AI will extract the grid and word list automatically."
+             GuideLink="guide/ai-parsing.html"
+             Position="right">
+        <h4>AI-Powered Upload</h4>
+    </Tooltip>
+
+    <div class="upload-options">
+        <div class="option-group">
+            <label>Platform</label>
+            <Tooltip Title="Platform Selection"
+                     Description="Choose the serverless platform to process your request. Cloudflare offers edge deployment, Vercel provides alternative hosting."
+                     GuideLink="guide/ai-parsing.html#supported-platforms"
+                     Position="right">
+                <select @bind="_platform" @bind:after="OnPlatformChange" class="select-input">
+                    <option value="cloudflare">Cloudflare Workers</option>
+                    <option value="vercel">Vercel</option>
+                </select>
+            </Tooltip>
+        </div>
+
+        <div class="option-group">
+            <label>AI Provider</label>
+            <Tooltip Title="AI Provider"
+                     Description="Select the AI model to analyze your puzzle. Groq offers fast inference, Gemini and Together AI are alternatives."
+                     GuideLink="guide/ai-parsing.html#ai-providers"
+                     Position="right">
+                <select @bind="_aiProvider" @bind:after="OnAiProviderChange" class="select-input">
+                    <option value="groq">Groq</option>
+                    <option value="gemini">Gemini</option>
+                    <option value="together">Together AI</option>
+                    @if (_platform == "cloudflare")
+                    {
+                        <option value="cloudflare-ai">Cloudflare AI</option>
+                    }
+                </select>
+            </Tooltip>
+        </div>
+    </div>
+
+    <div class="file-upload-area">
+        <Tooltip Title="Upload Image or Document"
+                 Description="Supports images, PDFs, Word docs, Excel files, and more. For best results, use clear, high-resolution images."
+                 GuideLink="guide/ai-parsing.html#tips-for-best-results"
+                 Position="right">
+            <InputFile OnChange="HandleFileChange" accept="image/*,.pdf,.docx,.doc,.xlsx,.xls,.txt,.csv,.html,.htm,.json,.xml" class="file-input-ai" />
+        </Tooltip>
+        <p class="upload-hint">Upload an image or document (PDF, Word, Excel, HTML, JSON, TXT, etc.)</p>
+    </div>
+
+    @if (_isLoading)
+    {
+        <div class="loading-indicator">
+            <span class="spinner"></span>
+            <span>Parsing puzzle with AI...</span>
+        </div>
+    }
+
+    @if (!string.IsNullOrEmpty(_error))
+    {
+        <div class="error-message">@_error</div>
+    }
+
+    @if (!string.IsNullOrEmpty(_successMessage))
+    {
+        <div class="success-message">@_successMessage</div>
+    }
+</div>
+
+@code {
+    [Inject] private IFileConverter FileConverter { get; set; } = default!;
+    [Inject] private IPuzzleParserApi PuzzleParserApi { get; set; } = default!;
+
+    [Parameter] public EventCallback<string> OnPuzzleParsed { get; set; }
+    [Parameter] public string Platform { get; set; } = "cloudflare";
+    [Parameter] public string AiProvider { get; set; } = "groq";
+    [Parameter] public EventCallback<string> OnPlatformChanged { get; set; }
+    [Parameter] public EventCallback<string> OnAiProviderChanged { get; set; }
+
+    private string _platform = "cloudflare";
+    private string _aiProvider = "groq";
+    private bool _isLoading;
+    private string? _error;
+    private string? _successMessage;
+
+    protected override void OnParametersSet()
+    {
+        _platform = Platform;
+        _aiProvider = AiProvider;
+    }
+
+    private async Task OnPlatformChange()
+    {
+        await OnPlatformChanged.InvokeAsync(_platform);
+    }
+
+    private async Task OnAiProviderChange()
+    {
+        await OnAiProviderChanged.InvokeAsync(_aiProvider);
+    }
+
+    private async Task HandleFileChange(InputFileChangeEventArgs e)
+    {
+        _error = null;
+        _successMessage = null;
+        _isLoading = true;
+        StateHasChanged();
+
+        try
+        {
+            var file = e.File;
+
+            if (!FileConverter.IsSupportedFile(file.ContentType))
+            {
+                _error = "Unsupported file type. Please upload an image or supported document format.";
+                return;
+            }
+
+            using var stream = file.OpenReadStream(maxAllowedSize: 10 * 1024 * 1024); // 10MB max
+
+            string content;
+            string contentType;
+
+            if (FileConverter.IsPlainTextFile(file.ContentType, file.Name))
+            {
+                content = await FileConverter.ReadTextAsync(stream);
+                contentType = "text";
+            }
+            else
+            {
+                content = await FileConverter.ToBase64Async(stream);
+                contentType = "image";
+            }
+
+            var request = new ParsePuzzleRequest
+            {
+                Content = content,
+                ContentType = contentType,
+                MimeType = file.ContentType,
+                AiProvider = _aiProvider
+            };
+
+            var response = await PuzzleParserApi.ParseAsync(request, _platform);
+
+            if (response.Success && !string.IsNullOrEmpty(response.PuzzleData))
+            {
+                _successMessage = response.Message ?? "Puzzle parsed successfully!";
+                await OnPuzzleParsed.InvokeAsync(response.PuzzleData);
+            }
+            else
+            {
+                _error = response.Error ?? "Failed to parse puzzle";
+                if (!string.IsNullOrEmpty(response.Details))
+                {
+                    _error += $": {response.Details}";
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            _error = $"Error processing file: {ex.Message}";
+            Console.WriteLine(_error);
+        }
+        finally
+        {
+            _isLoading = false;
+            StateHasChanged();
+        }
+    }
+}
