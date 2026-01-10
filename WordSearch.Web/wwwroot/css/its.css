@@ -16,6 +16,9 @@
     --its-surface-page: var(--f-neutral-50);
     --its-surface-page-alt: var(--f-neutral-100);
 
+    /* Default surface (white) */
+    --its-surface-default: var(--f-neutral-0);
+
     /* Cards, panels, containers */
     --its-surface-card: var(--f-neutral-0);
     --its-surface-card-hover: var(--f-neutral-25);
@@ -97,6 +100,8 @@
        ======================================================================== */
 
     /* Primary text hierarchy */
+    --its-text-default: var(--f-neutral-900);
+    --its-text-subtle: var(--f-neutral-600);
     --its-text-title: var(--f-neutral-900);
     --its-text-heading: var(--f-neutral-800);
     --its-text-body: var(--f-neutral-700);

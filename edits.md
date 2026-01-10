@@ -102,3 +102,69 @@
 - **Single Responsibility** - FileInput focuses on file input, ExampleSelector on examples
 - **Maintainability** - Example list changes only affect one file
 - **Encapsulation** - HTTP loading logic is contained within the component
+
+---
+
+## Saturday, Jan 11, 2026, 01:21 AM
+
+### Edit 4 - Move Upload Controls to Navbar
+
+**Request:** Put FileInput and AIUpload in a dropdown titled "Upload" in the navbar, then move ExampleSelector to the navbar as well.
+
+**Solution:** Created an event-based architecture to allow navbar components to communicate with the Index page, then moved all upload controls to the navbar.
+
+**Architecture:**
+
+Created `PuzzleService` as a singleton service that acts as an event bus:
+- `OnPuzzleLoaded` event - fired when any puzzle is loaded
+- `SetPlatform()` / `SetAiProvider()` - manage AI settings
+- Registered in `Program.cs` as singleton for app-wide sharing
+
+**Files Created:**
+
+1. **`Services/PuzzleService.cs`**
+   - Simple event service for cross-component communication
+   - Stores platform/provider preferences
+   - Fires `OnPuzzleLoaded` when puzzles are loaded
+
+2. **`Components/UploadDropdown.razor`**
+   - Dropdown trigger button with upload icon
+   - Contains FileInput and AIUpload in dropdown menu
+   - Closes dropdown after successful puzzle load
+
+3. **`Components/UploadDropdown.razor.css`**
+   - Fixed positioning dropdown menu
+   - Styled trigger to match navbar links
+   - Animated dropdown arrow
+
+**Files Updated:**
+
+1. **`Layout/NavBar.razor`**
+   - Added `<UploadDropdown />` to navbar-links
+   - Added `<ExampleSelector />` to navbar-links
+
+2. **`Components/ExampleSelector.razor`**
+   - Now uses PuzzleService instead of EventCallbacks
+   - Simplified to just load and notify
+
+3. **`Components/ExampleSelector.razor.css`**
+   - Restyled for navbar (transparent, matching colors)
+   - Custom SVG dropdown arrow
+
+4. **`Components/FileInput.razor`**
+   - Removed ExampleSelector (now in navbar separately)
+   - Simplified to just file input functionality
+
+5. **`Pages/Index.razor`**
+   - Removed FileInput and AIUpload from page
+   - Subscribes to `PuzzleService.OnPuzzleLoaded`
+   - Implements `IDisposable` for cleanup
+
+6. **`Program.cs`**
+   - Registered `PuzzleService` as singleton
+
+**Benefits:**
+- **Cleaner page layout** - Controls moved to navbar, more space for puzzle
+- **Decoupled architecture** - Components communicate via events
+- **Consistent UX** - All upload options accessible from navbar
+- **Reusable service** - PuzzleService can be used by future pages

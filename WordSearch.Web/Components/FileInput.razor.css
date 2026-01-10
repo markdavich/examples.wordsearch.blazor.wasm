@@ -1,20 +1,40 @@
 .file-input-container {
+    background: var(--its-surface-sunken);
+    border-radius: var(--its-radius-md);
+    padding: var(--f-space-4);
     display: flex;
     flex-direction: column;
     gap: var(--f-space-2);
 }
 
-.file-input-label {
-    font-weight: var(--f-weight-semibold);
+.file-input-container h4 {
+    margin: 0 0 var(--f-space-2) 0;
     color: var(--its-text-default);
 }
 
 .file-input {
     width: 100%;
-    padding: var(--f-space-2);
+    padding: var(--f-space-3);
     border: 2px dashed var(--its-border-default);
     border-radius: var(--its-radius-sm);
+    background: var(--its-surface-default);
+    color: var(--its-text-default);
     cursor: pointer;
+    text-align: center;
+}
+
+.file-input::file-selector-button {
+    padding: var(--f-space-2) var(--f-space-3);
+    border: 1px solid var(--its-border-default);
+    border-radius: var(--its-radius-sm);
+    background: var(--its-surface-sunken);
+    color: var(--its-text-default);
+    cursor: pointer;
+    margin-right: var(--f-space-2);
+}
+
+.file-input::file-selector-button:hover {
+    background: var(--its-surface-card-hover);
 }
 
 .file-input:hover {

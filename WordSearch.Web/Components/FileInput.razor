@@ -1,13 +1,13 @@
 @using Microsoft.AspNetCore.Components.Forms
 
 <div class="file-input-container">
-    <label class="file-input-label">@Label</label>
     <Tooltip Title="Upload Puzzle File"
              Description="Select a .txt or .wordsearch file containing the letter grid and word list."
              GuideLink="guide/file-format.html"
-             Position="bottom">
-        <InputFile OnChange="HandleFileChange" accept=".wordsearch,.txt" class="file-input" />
+             Position="right">
+        <h4>@Label</h4>
     </Tooltip>
+    <InputFile OnChange="HandleFileChange" accept=".wordsearch,.txt" class="file-input" />
     @if (!string.IsNullOrEmpty(_fileName))
     {
         <span class="file-name">@_fileName</span>
