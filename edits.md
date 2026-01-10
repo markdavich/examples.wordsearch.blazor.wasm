@@ -168,3 +168,37 @@ Created `PuzzleService` as a singleton service that acts as an event bus:
 - **Decoupled architecture** - Components communicate via events
 - **Consistent UX** - All upload options accessible from navbar
 - **Reusable service** - PuzzleService can be used by future pages
+
+---
+
+## Saturday, Jan 11, 2026, 01:37 AM
+
+### Edit 5 - Fix FileInput Styling to Match AIUpload
+
+**Problem:** FileInput text was white on white background, making it invisible. The component styling didn't match AIUpload.
+
+**Root Cause:** Missing CSS variables in its.css:
+- `--its-surface-default` (white background)
+- `--its-text-default` (dark text)
+- `--its-text-subtle` (muted text)
+
+**Solution:** Added missing CSS variables and updated FileInput styling.
+
+**Files Updated:**
+
+1. **`wwwroot/css/its.css`** - Added missing semantic tokens:
+   - `--its-surface-default: var(--f-neutral-0)` - white surface
+   - `--its-text-default: var(--f-neutral-900)` - dark text
+   - `--its-text-subtle: var(--f-neutral-600)` - muted text
+
+2. **`Components/FileInput.razor`**
+   - Changed label to h4 with tooltip (matching AIUpload structure)
+
+3. **`Components/FileInput.razor.css`**
+   - Added gray container background (`--its-surface-sunken`)
+   - Added padding and border-radius
+   - Added explicit `color: var(--its-text-default)` to file input
+   - Styled `::file-selector-button` pseudo-element with proper colors
+   - Added h4 styling
+
+**Result:** FileInput now has visible text and matches AIUpload's visual style with gray container and white input area.
