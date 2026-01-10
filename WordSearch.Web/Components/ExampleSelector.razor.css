@@ -1,0 +1,18 @@
+.example-select {
+    padding: 0.5rem;
+    border: 1px solid var(--its-border-default, #ccc);
+    border-radius: var(--its-radius-sm, 4px);
+    background: var(--its-surface-default, white);
+    cursor: pointer;
+    min-width: 140px;
+}
+
+.example-select:hover {
+    border-color: var(--its-primary-border, #1b6ec2);
+}
+
+.example-select:focus {
+    outline: none;
+    border-color: var(--its-primary-border, #1b6ec2);
+    box-shadow: var(--its-focus-ring);
+}

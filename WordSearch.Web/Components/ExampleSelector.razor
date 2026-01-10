@@ -1,0 +1,49 @@
+@inject HttpClient Http
+
+<Tooltip Title="Load Example"
+         Description="Choose from pre-loaded example puzzles to see how the solver works."
+         GuideLink="guide/getting-started.html#select-an-example"
+         Position="bottom">
+    <select class="example-select" @onchange="HandleExampleSelected">
+        <option value="">Load Example...</option>
+        @foreach (var example in ExampleFiles)
+        {
+            <option value="@example.Path">@example.Name</option>
+        }
+    </select>
+</Tooltip>
+
+@code {
+    [Parameter] public EventCallback<string> OnExampleLoaded { get; set; }
+    [Parameter] public EventCallback<string> OnError { get; set; }
+    [Parameter] public EventCallback<string> OnFileNameChanged { get; set; }
+
+    private static readonly List<(string Name, string Path)> ExampleFiles = new()
+    {
+        ("Ai", "assets/Ai.txt"),
+        ("GitHub", "assets/GitHub.txt"),
+        ("Enlighten", "assets/Enlighten.txt"),
+        ("ABC", "assets/ABC.txt"),
+        ("Numbers", "assets/Numbers.txt"),
+        ("Hello", "assets/Hello.txt")
+    };
+
+    private async Task HandleExampleSelected(ChangeEventArgs e)
+    {
+        var path = e.Value?.ToString();
+        if (string.IsNullOrEmpty(path))
+            return;
+
+        try
+        {
+            var content = await Http.GetStringAsync(path);
+            var fileName = Path.GetFileName(path);
+            await OnFileNameChanged.InvokeAsync(fileName);
+            await OnExampleLoaded.InvokeAsync(content);
+        }
+        catch (Exception ex)
+        {
+            await OnError.InvokeAsync($"Error loading example: {ex.Message}");
+        }
+    }
+}

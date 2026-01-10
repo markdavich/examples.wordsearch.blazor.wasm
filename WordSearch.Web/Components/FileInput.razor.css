@@ -36,19 +36,6 @@
     font-style: italic;
 }
 
-.example-select {
-    padding: 0.5rem;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    background: white;
-    cursor: pointer;
-    min-width: 140px;
-}
-
-.example-select:hover {
-    border-color: #1b6ec2;
-}
-
 .file-name {
     font-size: 0.875rem;
     color: #666;
