@@ -1,0 +1,776 @@
+/* ============================================================================
+   ITS THEME - Semantic Design Tokens
+   ============================================================================
+   These tokens define the visual language of ITS applications. They reference
+   foundation primitives and can be overridden by brand.css for custom clients.
+
+   Components should ONLY use these tokens, never foundation primitives directly.
+   ============================================================================ */
+
+:root {
+    /* ========================================================================
+       SURFACES - Backgrounds for containers and regions
+       ======================================================================== */
+
+    /* Page & Layout */
+    --its-surface-page: var(--f-neutral-50);
+    --its-surface-page-alt: var(--f-neutral-100);
+
+    /* Cards, panels, containers */
+    --its-surface-card: var(--f-neutral-0);
+    --its-surface-card-hover: var(--f-neutral-25);
+    --its-surface-card-pressed: var(--f-neutral-50);
+
+    /* Elevated surfaces (modals, popovers, dropdowns) */
+    --its-surface-elevated: var(--f-neutral-0);
+
+    /* Inset/sunken areas (wells, code blocks, inset panels) */
+    --its-surface-sunken: var(--f-neutral-100);
+    --its-surface-sunken-strong: var(--f-neutral-150);
+
+    /* Overlays */
+    --its-surface-overlay: rgba(0, 0, 0, 0.5);
+    --its-surface-overlay-light: rgba(0, 0, 0, 0.3);
+
+    /* Disabled surfaces */
+    --its-surface-disabled: var(--f-neutral-100);
+
+    /* ========================================================================
+       HEADER / TOP NAVIGATION
+       ======================================================================== */
+
+    --its-header-bg: var(--f-green-800);
+    --its-header-bg-hover: var(--f-green-700);
+    --its-header-bg-active: var(--f-green-900);
+    --its-header-text: var(--f-neutral-0);
+    --its-header-text-muted: var(--f-green-200);
+    --its-header-text-hover: var(--f-neutral-0);
+    --its-header-border: var(--f-green-900);
+    --its-header-shadow: var(--f-shadow-md);
+
+    /* Header navigation items */
+    --its-header-nav-bg: transparent;
+    --its-header-nav-bg-hover: var(--f-green-700);
+    --its-header-nav-bg-active: var(--f-green-900);
+    --its-header-nav-text: var(--f-green-100);
+    --its-header-nav-text-hover: var(--f-neutral-0);
+    --its-header-nav-text-active: var(--f-neutral-0);
+    --its-header-nav-indicator: var(--f-green-400);
+
+    /* ========================================================================
+       SIDEBAR / SIDE NAVIGATION
+       ======================================================================== */
+
+    --its-sidebar-bg: var(--f-neutral-0);
+    --its-sidebar-border: var(--f-neutral-200);
+    --its-sidebar-shadow: var(--f-shadow-sm);
+
+    /* Sidebar navigation items */
+    --its-sidebar-nav-bg: transparent;
+    --its-sidebar-nav-bg-hover: var(--f-neutral-100);
+    --its-sidebar-nav-bg-active: var(--f-green-50);
+    --its-sidebar-nav-text: var(--f-neutral-600);
+    --its-sidebar-nav-text-hover: var(--f-neutral-900);
+    --its-sidebar-nav-text-active: var(--f-green-800);
+    --its-sidebar-nav-icon: var(--f-neutral-400);
+    --its-sidebar-nav-icon-hover: var(--f-neutral-600);
+    --its-sidebar-nav-icon-active: var(--f-green-700);
+    --its-sidebar-nav-indicator: var(--f-green-600);
+
+    /* Sidebar sections/groups */
+    --its-sidebar-section-text: var(--f-neutral-500);
+    --its-sidebar-divider: var(--f-neutral-200);
+
+    /* ========================================================================
+       FOOTER
+       ======================================================================== */
+
+    --its-footer-bg: var(--f-neutral-100);
+    --its-footer-text: var(--f-neutral-600);
+    --its-footer-text-muted: var(--f-neutral-500);
+    --its-footer-link: var(--f-neutral-700);
+    --its-footer-link-hover: var(--f-green-700);
+    --its-footer-border: var(--f-neutral-200);
+
+    /* ========================================================================
+       TYPOGRAPHY - Text Colors
+       ======================================================================== */
+
+    /* Primary text hierarchy */
+    --its-text-title: var(--f-neutral-900);
+    --its-text-heading: var(--f-neutral-800);
+    --its-text-body: var(--f-neutral-700);
+    --its-text-muted: var(--f-neutral-500);
+    --its-text-placeholder: var(--f-neutral-400);
+    --its-text-disabled: var(--f-neutral-400);
+
+    /* Inverse text (on dark backgrounds) */
+    --its-text-inverse: var(--f-neutral-0);
+    --its-text-inverse-muted: var(--f-neutral-300);
+    --its-text-inverse-disabled: var(--f-neutral-500);
+
+    /* Links */
+    --its-text-link: var(--f-blue-700);
+    --its-text-link-hover: var(--f-blue-800);
+    --its-text-link-active: var(--f-blue-900);
+    --its-text-link-visited: var(--f-purple-700);
+
+    /* ========================================================================
+       TYPOGRAPHY - Font Settings
+       ======================================================================== */
+
+    --its-font-body: var(--f-font-sans);
+    --its-font-heading: var(--f-font-sans);
+    --its-font-mono: var(--f-font-mono);
+
+    /* Title (h1, page titles) */
+    --its-title-size: var(--f-text-3xl);
+    --its-title-weight: var(--f-weight-bold);
+    --its-title-leading: var(--f-leading-tight);
+    --its-title-tracking: var(--f-tracking-tight);
+
+    /* Heading (h2) */
+    --its-heading-size: var(--f-text-2xl);
+    --its-heading-weight: var(--f-weight-semibold);
+    --its-heading-leading: var(--f-leading-tight);
+    --its-heading-tracking: var(--f-tracking-normal);
+
+    /* Subheading (h3) */
+    --its-subheading-size: var(--f-text-xl);
+    --its-subheading-weight: var(--f-weight-semibold);
+    --its-subheading-leading: var(--f-leading-snug);
+    --its-subheading-tracking: var(--f-tracking-normal);
+
+    /* Section heading (h4) */
+    --its-section-heading-size: var(--f-text-lg);
+    --its-section-heading-weight: var(--f-weight-medium);
+    --its-section-heading-leading: var(--f-leading-snug);
+    --its-section-heading-tracking: var(--f-tracking-normal);
+
+    /* Body text */
+    --its-body-size: var(--f-text-base);
+    --its-body-weight: var(--f-weight-normal);
+    --its-body-leading: var(--f-leading-normal);
+
+    /* Small text */
+    --its-small-size: var(--f-text-sm);
+    --its-small-weight: var(--f-weight-normal);
+    --its-small-leading: var(--f-leading-normal);
+
+    /* Caption/fine print */
+    --its-caption-size: var(--f-text-xs);
+    --its-caption-weight: var(--f-weight-normal);
+    --its-caption-leading: var(--f-leading-normal);
+
+    /* ========================================================================
+       BORDERS
+       ======================================================================== */
+
+    /* Border colors */
+    --its-border-default: var(--f-neutral-200);
+    --its-border-strong: var(--f-neutral-300);
+    --its-border-muted: var(--f-neutral-150);
+    --its-border-subtle: var(--f-neutral-100);
+    --its-border-inverse: var(--f-neutral-700);
+    --its-border-disabled: var(--f-neutral-200);
+
+    /* Border widths */
+    --its-border-width-default: var(--f-border-1);
+    --its-border-width-thick: var(--f-border-2);
+
+    /* Border radius */
+    --its-radius-sm: var(--f-radius-base);
+    --its-radius-md: var(--f-radius-md);
+    --its-radius-lg: var(--f-radius-lg);
+    --its-radius-xl: var(--f-radius-xl);
+    --its-radius-full: var(--f-radius-full);
+
+    /* ========================================================================
+       FOCUS STATES
+       ======================================================================== */
+
+    --its-focus-color: var(--f-blue-500);
+    --its-focus-ring: 0 0 0 2px var(--f-neutral-0), 0 0 0 4px var(--f-blue-500);
+    --its-focus-ring-inset: inset 0 0 0 2px var(--f-blue-500);
+    --its-focus-ring-error: 0 0 0 2px var(--f-neutral-0), 0 0 0 4px var(--f-red-500);
+
+    /* ========================================================================
+       PRIMARY BUTTON / ACTION
+       ======================================================================== */
+
+    --its-primary-bg: var(--f-green-700);
+    --its-primary-bg-hover: var(--f-green-800);
+    --its-primary-bg-active: var(--f-green-900);
+    --its-primary-bg-disabled: var(--f-neutral-200);
+    --its-primary-text: var(--f-neutral-0);
+    --its-primary-text-disabled: var(--f-neutral-500);
+    --its-primary-border: var(--f-green-700);
+    --its-primary-border-hover: var(--f-green-800);
+    --its-primary-shadow: var(--f-shadow-sm);
+    --its-primary-shadow-hover: var(--f-shadow-md);
+
+    /* ========================================================================
+       SECONDARY BUTTON / ACTION
+       ======================================================================== */
+
+    --its-secondary-bg: var(--f-neutral-0);
+    --its-secondary-bg-hover: var(--f-neutral-50);
+    --its-secondary-bg-active: var(--f-neutral-100);
+    --its-secondary-bg-disabled: var(--f-neutral-50);
+    --its-secondary-text: var(--f-neutral-700);
+    --its-secondary-text-hover: var(--f-neutral-900);
+    --its-secondary-text-disabled: var(--f-neutral-400);
+    --its-secondary-border: var(--f-neutral-300);
+    --its-secondary-border-hover: var(--f-neutral-400);
+    --its-secondary-border-disabled: var(--f-neutral-200);
+
+    /* ========================================================================
+       TERTIARY / GHOST BUTTON
+       ======================================================================== */
+
+    --its-tertiary-bg: transparent;
+    --its-tertiary-bg-hover: var(--f-neutral-100);
+    --its-tertiary-bg-active: var(--f-neutral-200);
+    --its-tertiary-text: var(--f-neutral-700);
+    --its-tertiary-text-hover: var(--f-neutral-900);
+    --its-tertiary-text-disabled: var(--f-neutral-400);
+
+    /* ========================================================================
+       DANGER / DESTRUCTIVE BUTTON
+       ======================================================================== */
+
+    --its-danger-bg: var(--f-red-600);
+    --its-danger-bg-hover: var(--f-red-700);
+    --its-danger-bg-active: var(--f-red-800);
+    --its-danger-text: var(--f-neutral-0);
+    --its-danger-border: var(--f-red-600);
+
+    /* Danger secondary (outline style) */
+    --its-danger-secondary-bg: var(--f-neutral-0);
+    --its-danger-secondary-bg-hover: var(--f-red-50);
+    --its-danger-secondary-text: var(--f-red-700);
+    --its-danger-secondary-border: var(--f-red-300);
+    --its-danger-secondary-border-hover: var(--f-red-400);
+
+    /* ========================================================================
+       STATUS - SUCCESS
+       ======================================================================== */
+
+    --its-success-bg: var(--f-green-50);
+    --its-success-bg-strong: var(--f-green-100);
+    --its-success-text: var(--f-green-800);
+    --its-success-text-strong: var(--f-green-900);
+    --its-success-border: var(--f-green-200);
+    --its-success-border-strong: var(--f-green-300);
+    --its-success-icon: var(--f-green-600);
+
+    /* ========================================================================
+       STATUS - ERROR
+       ======================================================================== */
+
+    --its-error-bg: var(--f-red-50);
+    --its-error-bg-strong: var(--f-red-100);
+    --its-error-text: var(--f-red-700);
+    --its-error-text-strong: var(--f-red-900);
+    --its-error-border: var(--f-red-200);
+    --its-error-border-strong: var(--f-red-300);
+    --its-error-icon: var(--f-red-500);
+
+    /* ========================================================================
+       STATUS - WARNING
+       ======================================================================== */
+
+    --its-warning-bg: var(--f-amber-50);
+    --its-warning-bg-strong: var(--f-amber-100);
+    --its-warning-text: var(--f-amber-800);
+    --its-warning-text-strong: var(--f-amber-900);
+    --its-warning-border: var(--f-amber-200);
+    --its-warning-border-strong: var(--f-amber-300);
+    --its-warning-icon: var(--f-amber-500);
+
+    /* ========================================================================
+       STATUS - INFO
+       ======================================================================== */
+
+    --its-info-bg: var(--f-blue-50);
+    --its-info-bg-strong: var(--f-blue-100);
+    --its-info-text: var(--f-blue-700);
+    --its-info-text-strong: var(--f-blue-900);
+    --its-info-border: var(--f-blue-200);
+    --its-info-border-strong: var(--f-blue-300);
+    --its-info-icon: var(--f-blue-500);
+
+    /* ========================================================================
+       FORM - INPUT FIELDS
+       ======================================================================== */
+
+    --its-input-bg: var(--f-neutral-0);
+    --its-input-bg-hover: var(--f-neutral-0);
+    --its-input-bg-focus: var(--f-neutral-0);
+    --its-input-bg-disabled: var(--f-neutral-100);
+    --its-input-bg-readonly: var(--f-neutral-50);
+
+    --its-input-text: var(--f-neutral-900);
+    --its-input-text-placeholder: var(--f-neutral-400);
+    --its-input-text-disabled: var(--f-neutral-500);
+
+    --its-input-border: var(--f-neutral-300);
+    --its-input-border-hover: var(--f-neutral-400);
+    --its-input-border-focus: var(--f-blue-500);
+    --its-input-border-error: var(--f-red-500);
+    --its-input-border-success: var(--f-green-500);
+    --its-input-border-disabled: var(--f-neutral-200);
+
+    --its-input-radius: var(--f-radius-md);
+    --its-input-shadow-focus: 0 0 0 3px rgba(59, 130, 246, 0.15);
+    --its-input-shadow-error: 0 0 0 3px rgba(239, 68, 68, 0.15);
+
+    /* ========================================================================
+       FORM - LABELS & HELPER TEXT
+       ======================================================================== */
+
+    --its-label-text: var(--f-neutral-700);
+    --its-label-text-required: var(--f-red-500);
+    --its-label-size: var(--f-text-sm);
+    --its-label-weight: var(--f-weight-medium);
+
+    --its-helper-text: var(--f-neutral-500);
+    --its-helper-text-error: var(--f-red-600);
+    --its-helper-text-success: var(--f-green-600);
+    --its-helper-size: var(--f-text-sm);
+
+    /* ========================================================================
+       FORM - CHECKBOX & RADIO
+       ======================================================================== */
+
+    --its-checkbox-bg: var(--f-neutral-0);
+    --its-checkbox-bg-checked: var(--f-green-600);
+    --its-checkbox-bg-disabled: var(--f-neutral-100);
+    --its-checkbox-border: var(--f-neutral-300);
+    --its-checkbox-border-hover: var(--f-neutral-400);
+    --its-checkbox-border-checked: var(--f-green-600);
+    --its-checkbox-check-color: var(--f-neutral-0);
+    --its-checkbox-radius: var(--f-radius-base);
+
+    --its-radio-bg: var(--f-neutral-0);
+    --its-radio-bg-checked: var(--f-neutral-0);
+    --its-radio-border: var(--f-neutral-300);
+    --its-radio-border-checked: var(--f-green-600);
+    --its-radio-dot: var(--f-green-600);
+
+    /* ========================================================================
+       FORM - SELECT / DROPDOWN
+       ======================================================================== */
+
+    --its-select-bg: var(--f-neutral-0);
+    --its-select-border: var(--f-neutral-300);
+    --its-select-border-focus: var(--f-blue-500);
+    --its-select-arrow: var(--f-neutral-500);
+
+    --its-select-option-bg: var(--f-neutral-0);
+    --its-select-option-bg-hover: var(--f-neutral-100);
+    --its-select-option-bg-selected: var(--f-green-50);
+    --its-select-option-text: var(--f-neutral-900);
+    --its-select-option-text-selected: var(--f-green-800);
+
+    /* ========================================================================
+       FORM - TOGGLE / SWITCH
+       ======================================================================== */
+
+    --its-toggle-bg: var(--f-neutral-300);
+    --its-toggle-bg-checked: var(--f-green-600);
+    --its-toggle-bg-disabled: var(--f-neutral-200);
+    --its-toggle-handle: var(--f-neutral-0);
+    --its-toggle-handle-shadow: var(--f-shadow-sm);
+
+    /* ========================================================================
+       TABLE
+       ======================================================================== */
+
+    --its-table-bg: var(--f-neutral-0);
+    --its-table-border: var(--f-neutral-200);
+
+    --its-table-header-bg: var(--f-neutral-50);
+    --its-table-header-text: var(--f-neutral-700);
+    --its-table-header-border: var(--f-neutral-200);
+
+    --its-table-row-bg: var(--f-neutral-0);
+    --its-table-row-bg-hover: var(--f-neutral-50);
+    --its-table-row-bg-selected: var(--f-green-50);
+    --its-table-row-bg-striped: var(--f-neutral-25);
+    --its-table-row-border: var(--f-neutral-100);
+
+    --its-table-cell-text: var(--f-neutral-700);
+    --its-table-cell-text-muted: var(--f-neutral-500);
+
+    /* ========================================================================
+       CARD / PANEL
+       ======================================================================== */
+
+    --its-card-bg: var(--f-neutral-0);
+    --its-card-bg-hover: var(--f-neutral-25);
+    --its-card-border: var(--f-neutral-200);
+    --its-card-border-hover: var(--f-neutral-300);
+    --its-card-radius: var(--f-radius-lg);
+    --its-card-shadow: var(--f-shadow-sm);
+    --its-card-shadow-hover: var(--f-shadow-md);
+
+    --its-card-header-bg: var(--f-neutral-50);
+    --its-card-header-border: var(--f-neutral-200);
+    --its-card-header-text: var(--f-neutral-800);
+
+    --its-card-footer-bg: var(--f-neutral-50);
+    --its-card-footer-border: var(--f-neutral-200);
+
+    /* ========================================================================
+       MODAL / DIALOG
+       ======================================================================== */
+
+    --its-modal-bg: var(--f-neutral-0);
+    --its-modal-border: var(--f-neutral-200);
+    --its-modal-radius: var(--f-radius-xl);
+    --its-modal-shadow: var(--f-shadow-2xl);
+
+    --its-modal-header-bg: var(--f-neutral-0);
+    --its-modal-header-border: var(--f-neutral-200);
+    --its-modal-header-text: var(--f-neutral-900);
+
+    --its-modal-footer-bg: var(--f-neutral-50);
+    --its-modal-footer-border: var(--f-neutral-200);
+
+    --its-modal-backdrop: rgba(0, 0, 0, 0.5);
+
+    /* ========================================================================
+       TOOLTIP
+       ======================================================================== */
+
+    --its-tooltip-bg: var(--f-neutral-900);
+    --its-tooltip-text: var(--f-neutral-0);
+    --its-tooltip-radius: var(--f-radius-md);
+    --its-tooltip-shadow: var(--f-shadow-lg);
+
+    /* Light variant */
+    --its-tooltip-light-bg: var(--f-neutral-0);
+    --its-tooltip-light-text: var(--f-neutral-700);
+    --its-tooltip-light-border: var(--f-neutral-200);
+
+    /* ========================================================================
+       POPOVER
+       ======================================================================== */
+
+    --its-popover-bg: var(--f-neutral-0);
+    --its-popover-border: var(--f-neutral-200);
+    --its-popover-radius: var(--f-radius-lg);
+    --its-popover-shadow: var(--f-shadow-xl);
+
+    /* ========================================================================
+       DROPDOWN MENU
+       ======================================================================== */
+
+    --its-dropdown-bg: var(--f-neutral-0);
+    --its-dropdown-border: var(--f-neutral-200);
+    --its-dropdown-radius: var(--f-radius-lg);
+    --its-dropdown-shadow: var(--f-shadow-lg);
+
+    --its-dropdown-item-bg: transparent;
+    --its-dropdown-item-bg-hover: var(--f-neutral-100);
+    --its-dropdown-item-bg-active: var(--f-neutral-200);
+    --its-dropdown-item-text: var(--f-neutral-700);
+    --its-dropdown-item-text-hover: var(--f-neutral-900);
+    --its-dropdown-item-icon: var(--f-neutral-500);
+    --its-dropdown-item-icon-hover: var(--f-neutral-700);
+
+    --its-dropdown-divider: var(--f-neutral-200);
+    --its-dropdown-section-text: var(--f-neutral-500);
+
+    /* Danger item */
+    --its-dropdown-danger-text: var(--f-red-600);
+    --its-dropdown-danger-text-hover: var(--f-red-700);
+    --its-dropdown-danger-bg-hover: var(--f-red-50);
+
+    /* ========================================================================
+       BADGE / TAG / CHIP
+       ======================================================================== */
+
+    /* Neutral */
+    --its-badge-bg: var(--f-neutral-100);
+    --its-badge-text: var(--f-neutral-700);
+    --its-badge-border: var(--f-neutral-200);
+
+    /* Primary */
+    --its-badge-primary-bg: var(--f-green-100);
+    --its-badge-primary-text: var(--f-green-800);
+    --its-badge-primary-border: var(--f-green-200);
+
+    /* Success */
+    --its-badge-success-bg: var(--f-green-100);
+    --its-badge-success-text: var(--f-green-800);
+
+    /* Error */
+    --its-badge-error-bg: var(--f-red-100);
+    --its-badge-error-text: var(--f-red-800);
+
+    /* Warning */
+    --its-badge-warning-bg: var(--f-amber-100);
+    --its-badge-warning-text: var(--f-amber-800);
+
+    /* Info */
+    --its-badge-info-bg: var(--f-blue-100);
+    --its-badge-info-text: var(--f-blue-800);
+
+    --its-badge-radius: var(--f-radius-full);
+
+    /* ========================================================================
+       TABS
+       ======================================================================== */
+
+    --its-tabs-border: var(--f-neutral-200);
+
+    --its-tab-text: var(--f-neutral-600);
+    --its-tab-text-hover: var(--f-neutral-900);
+    --its-tab-text-active: var(--f-green-700);
+    --its-tab-bg-hover: var(--f-neutral-100);
+    --its-tab-indicator: var(--f-green-600);
+
+    /* ========================================================================
+       BREADCRUMB
+       ======================================================================== */
+
+    --its-breadcrumb-text: var(--f-neutral-500);
+    --its-breadcrumb-text-hover: var(--f-neutral-700);
+    --its-breadcrumb-text-current: var(--f-neutral-900);
+    --its-breadcrumb-separator: var(--f-neutral-400);
+
+    /* ========================================================================
+       PAGINATION
+       ======================================================================== */
+
+    --its-pagination-bg: var(--f-neutral-0);
+    --its-pagination-bg-hover: var(--f-neutral-100);
+    --its-pagination-bg-active: var(--f-green-600);
+    --its-pagination-text: var(--f-neutral-700);
+    --its-pagination-text-hover: var(--f-neutral-900);
+    --its-pagination-text-active: var(--f-neutral-0);
+    --its-pagination-border: var(--f-neutral-300);
+    --its-pagination-border-active: var(--f-green-600);
+
+    /* ========================================================================
+       PROGRESS BAR
+       ======================================================================== */
+
+    --its-progress-bg: var(--f-neutral-200);
+    --its-progress-fill: var(--f-green-600);
+    --its-progress-fill-success: var(--f-green-500);
+    --its-progress-fill-warning: var(--f-amber-500);
+    --its-progress-fill-error: var(--f-red-500);
+    --its-progress-radius: var(--f-radius-full);
+
+    /* ========================================================================
+       SKELETON / LOADING PLACEHOLDER
+       ======================================================================== */
+
+    --its-skeleton-bg: var(--f-neutral-200);
+    --its-skeleton-highlight: var(--f-neutral-100);
+
+    /* ========================================================================
+       TOAST / NOTIFICATION
+       ======================================================================== */
+
+    --its-toast-bg: var(--f-neutral-900);
+    --its-toast-text: var(--f-neutral-0);
+    --its-toast-border: var(--f-neutral-800);
+    --its-toast-radius: var(--f-radius-lg);
+    --its-toast-shadow: var(--f-shadow-xl);
+
+    /* Variants inherit from status colors */
+    --its-toast-success-bg: var(--f-green-800);
+    --its-toast-error-bg: var(--f-red-700);
+    --its-toast-warning-bg: var(--f-amber-600);
+    --its-toast-info-bg: var(--f-blue-700);
+
+    /* ========================================================================
+       AVATAR
+       ======================================================================== */
+
+    --its-avatar-bg: var(--f-neutral-200);
+    --its-avatar-text: var(--f-neutral-600);
+    --its-avatar-border: var(--f-neutral-0);
+
+    /* ========================================================================
+       DIVIDER
+       ======================================================================== */
+
+    --its-divider-color: var(--f-neutral-200);
+    --its-divider-color-strong: var(--f-neutral-300);
+    --its-divider-color-muted: var(--f-neutral-100);
+
+    /* ========================================================================
+       CODE / SYNTAX
+       ======================================================================== */
+
+    --its-code-bg: var(--f-neutral-100);
+    --its-code-text: var(--f-purple-700);
+    --its-code-border: var(--f-neutral-200);
+    --its-code-radius: var(--f-radius-base);
+
+    --its-code-block-bg: var(--f-neutral-900);
+    --its-code-block-text: var(--f-neutral-100);
+    --its-code-block-border: var(--f-neutral-800);
+
+    /* ========================================================================
+       SCROLLBAR (for webkit browsers)
+       ======================================================================== */
+
+    --its-scrollbar-track: var(--f-neutral-100);
+    --its-scrollbar-thumb: var(--f-neutral-300);
+    --its-scrollbar-thumb-hover: var(--f-neutral-400);
+
+    /* ========================================================================
+       SHADOWS (Semantic)
+       ======================================================================== */
+
+    --its-shadow-xs: var(--f-shadow-xs);
+    --its-shadow-sm: var(--f-shadow-sm);
+    --its-shadow-md: var(--f-shadow-md);
+    --its-shadow-lg: var(--f-shadow-lg);
+    --its-shadow-xl: var(--f-shadow-xl);
+
+    /* ========================================================================
+       TRANSITIONS
+       ======================================================================== */
+
+    --its-transition-fast: var(--f-transition-fast);
+    --its-transition-normal: var(--f-transition-normal);
+    --its-transition-slow: var(--f-transition-slow);
+
+    /* ========================================================================
+       SPACING (Semantic aliases for common uses)
+       ======================================================================== */
+
+    --its-space-page-x: var(--f-space-6);
+    --its-space-page-y: var(--f-space-8);
+    --its-space-section: var(--f-space-12);
+    --its-space-card-padding: var(--f-space-5);
+    --its-space-input-x: var(--f-space-3);
+    --its-space-input-y: var(--f-space-2);
+    --its-space-button-x: var(--f-space-4);
+    --its-space-button-y: var(--f-space-2);
+
+    /* ========================================================================
+       LAYOUT
+       ======================================================================== */
+
+    --its-header-height: 60px;
+    --its-sidebar-width: 250px;
+    --its-sidebar-width-collapsed: 64px;
+    --its-content-max-width: 1200px;
+    --its-form-max-width: 600px;
+}
+
+/* ============================================================================
+   BASE ELEMENT STYLES
+   ============================================================================
+   Apply semantic tokens to base HTML elements.
+   ============================================================================ */
+
+html {
+    font-family: var(--its-font-body);
+    font-size: var(--its-body-size);
+    color: var(--its-text-body);
+    background-color: var(--its-surface-page);
+}
+
+body {
+    min-height: 100vh;
+}
+
+/* Typography */
+h1, h2, h3, h4, h5, h6 {
+    font-family: var(--its-font-heading);
+    color: var(--its-text-heading);
+}
+
+h1 {
+    font-size: var(--its-title-size);
+    font-weight: var(--its-title-weight);
+    line-height: var(--its-title-leading);
+    letter-spacing: var(--its-title-tracking);
+    color: var(--its-text-title);
+}
+
+h2 {
+    font-size: var(--its-heading-size);
+    font-weight: var(--its-heading-weight);
+    line-height: var(--its-heading-leading);
+}
+
+h3 {
+    font-size: var(--its-subheading-size);
+    font-weight: var(--its-subheading-weight);
+    line-height: var(--its-subheading-leading);
+}
+
+h4 {
+    font-size: var(--its-section-heading-size);
+    font-weight: var(--its-section-heading-weight);
+    line-height: var(--its-section-heading-leading);
+}
+
+p {
+    line-height: var(--its-body-leading);
+}
+
+small {
+    font-size: var(--its-small-size);
+}
+
+/* Links */
+a {
+    color: var(--its-text-link);
+    transition: color var(--its-transition-fast);
+}
+
+a:hover {
+    color: var(--its-text-link-hover);
+}
+
+a:active {
+    color: var(--its-text-link-active);
+}
+
+/* Code */
+code {
+    font-family: var(--its-font-mono);
+    font-size: 0.875em;
+    background-color: var(--its-code-bg);
+    color: var(--its-code-text);
+    padding: 0.125rem 0.375rem;
+    border-radius: var(--its-code-radius);
+}
+
+pre {
+    font-family: var(--its-font-mono);
+    background-color: var(--its-code-block-bg);
+    color: var(--its-code-block-text);
+    padding: var(--f-space-4);
+    border-radius: var(--its-radius-lg);
+    overflow-x: auto;
+}
+
+pre code {
+    background: none;
+    padding: 0;
+    color: inherit;
+}
+
+/* Focus styles */
+:focus-visible {
+    outline: none;
+    box-shadow: var(--its-focus-ring);
+}
+
+/* Selection */
+::selection {
+    background-color: var(--f-green-200);
+    color: var(--f-green-900);
+}

@@ -1,62 +1,68 @@
 # Session Notes - January 9, 2026
 
-## Problem
-The v0.0.0 commit broke the working styling from v0.0.0-working. Issues include:
-- Container styling broken
-- Stadium hover functionality broken
-- Layout issues
+## Completed: CSS Architecture Overhaul
 
-## What We've Done
-1. Tagged working version as `v0.0.0-working` (commit 013f4e5)
-2. Tagged broken version as `v0.0.0` (commit a0caf46)
-3. Restored original component CSS files from v0.0.0-working:
-   - WordSearchGrid.razor.css
-   - Answers.razor.css
-   - WordsToFind.razor.css
-   - FileInput.razor.css
-   - AIUpload.razor.css
-4. Restored original layout styles in app.css:
-   - .word-search-container (350px column, 60px height calc)
-   - .left-column (overflow: hidden)
-   - .button-row (margin-bottom: 1rem)
-   - Simplified media queries
+### What Was Done
 
-## What's Still Broken
-- "Better but still broken" - need to identify remaining issues
-- Likely candidates:
-  - MainLayout.razor.css differences not yet checked thoroughly
-  - NavBar styling
-  - Possible JS interop issues
-  - Other app.css styles that were changed
+1. **Removed Bootstrap entirely**
+   - Deleted `/wwwroot/css/bootstrap/` folder
+   - Removed Bootstrap reference from `index.html`
 
-## Key Commands to Compare Versions
+2. **Created new CSS architecture with four-tier hierarchy:**
+
+   | File | Purpose | Size |
+   |------|---------|------|
+   | `foundation.css` | Design system primitives (colors, spacing, typography, shadows, z-index, transitions) + CSS reset | 14KB |
+   | `its.css` | ITS semantic tokens (surfaces, buttons, forms, components) + base element styles | 30KB |
+   | `brand.css` | Client branding overrides (empty placeholder for non-custom clients) | <1KB |
+   | `app.css` | Word Search application-specific styles | 4KB |
+
+3. **Updated `index.html` with new CSS loading order:**
+   ```html
+   <link rel="stylesheet" href="css/foundation.css" />
+   <link rel="stylesheet" href="css/its.css" />
+   <link rel="stylesheet" href="css/brand.css" />
+   <link rel="stylesheet" href="css/app.css" />
+   ```
+
+4. **Kept new features** (Tooltips, User Guide link) - these were functional improvements not styling issues
+
+### CSS Architecture Rules Established
+
+1. **Hierarchy:** Foundation -> ITS -> Brand -> App -> Component
+2. **Component CSS is sacrosanct** - never remove component styles to use higher-level styles
+3. **Use semantic tokens** - components reference `--its-*` tokens, not `--f-*` primitives
+4. **Brand overrides** - paying clients override `--its-*` tokens in `brand.css`
+
+### Naming Convention
+
+- `--f-*` = Foundation primitives (raw values)
+- `--its-*` = ITS semantic tokens (purpose-driven)
+- `.f-*` = Foundation utility classes (if needed)
+- Component CSS = scoped, no prefix needed
+
+### Key Commands
+
 ```bash
-# Compare any file between versions
-git diff v0.0.0-working:src/WordSearchSolver.Web/PATH v0.0.0:WordSearch.Web/PATH
-
-# Show original working file
-git show v0.0.0-working:src/WordSearchSolver.Web/PATH
-
-# Show all differences
-git diff v0.0.0-working v0.0.0
-
 # Run the app
 dotnet run --project WordSearch.Web
+
+# Build
+dotnet build WordSearch.Web
 ```
 
-## Key Files to Investigate
-- WordSearch.Web/wwwroot/css/app.css (global styles - partially fixed)
-- WordSearch.Web/Components/WordSearchGrid.razor.css (stadium hover - restored)
-- WordSearch.Web/Layout/MainLayout.razor.css (layout wrapper)
-- WordSearch.Web/Components/*.razor.css (all component styles)
+### Files Changed
 
-## Git Tags
-- `v0.0.0-working` - Last known good version (old structure: src/WordSearchSolver.*)
-- `v0.0.0` - Broken version with new structure (WordSearch.*)
-- Current main has partial fixes applied
+- `/wwwroot/css/bootstrap/` - DELETED
+- `/wwwroot/css/foundation.css` - CREATED
+- `/wwwroot/css/its.css` - CREATED
+- `/wwwroot/css/brand.css` - CREATED
+- `/wwwroot/css/app.css` - REPLACED (original styles using semantic tokens)
+- `/wwwroot/index.html` - UPDATED (new CSS loading order)
 
-## Next Steps
-1. Run both versions side-by-side to identify visual differences
-2. Use browser dev tools to compare computed styles
-3. Check for any remaining CSS differences not yet restored
-4. Consider fully reverting app.css to original and re-adding only the CSS variables
+### Next Steps
+
+1. Run the application and visually verify styling works
+2. Test all interactive features (hover effects, buttons, tooltips)
+3. Fix any styling issues that arise from Bootstrap removal
+4. Consider migrating component CSS to use semantic tokens where appropriate

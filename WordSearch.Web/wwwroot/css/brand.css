@@ -1,0 +1,20 @@
+/* ============================================================================
+   BRAND - Client Theme Overrides
+   ============================================================================
+   This file is for client-specific branding overrides. Clients who pay for
+   custom theming have their brand colors, fonts, and other visual elements
+   defined here.
+
+   For clients without custom branding, this file remains empty and the
+   ITS default theme (its.css) is used.
+
+   To customize, override the --its-* semantic tokens. Example:
+
+   :root {
+       --its-header-bg: #5b21b6;
+       --its-primary-bg: #7c3aed;
+       --its-text-link: #7c3aed;
+   }
+   ============================================================================ */
+
+/* No custom branding - using ITS defaults */
