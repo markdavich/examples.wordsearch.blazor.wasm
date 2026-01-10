@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" fill="none">
+  <!-- Background bowl shape -->
+  <path d="M6 18C6 18 4 20 4 26C4 36 12 42 24 42C36 42 44 36 44 26C44 20 42 18 42 18"
+        stroke="#00562A" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+
+  <!-- Steam wisps -->
+  <path d="M16 14C16 14 15 11 17 9" stroke="#3EB54B" stroke-width="1.5" stroke-linecap="round" opacity="0.7"/>
+  <path d="M24 12C24 12 23 8 25 6" stroke="#3EB54B" stroke-width="1.5" stroke-linecap="round" opacity="0.7"/>
+  <path d="M32 14C32 14 31 11 33 9" stroke="#3EB54B" stroke-width="1.5" stroke-linecap="round" opacity="0.7"/>
+
+  <!-- Letter grid inside bowl -->
+  <g font-family="monospace" font-weight="600" font-size="7">
+    <!-- Row 1 -->
+    <text x="12" y="26" fill="#01391C">W</text>
+    <text x="20" y="26" fill="#01391C">O</text>
+    <text x="28" y="26" fill="#01391C">R</text>
+    <text x="36" y="26" fill="#01391C">D</text>
+
+    <!-- Row 2 - with highlight on some letters -->
+    <text x="14" y="34" fill="#01391C">S</text>
+    <text x="22" y="34" fill="#00562A">O</text>
+    <text x="30" y="34" fill="#01391C">U</text>
+    <text x="38" y="34" fill="#01391C">P</text>
+  </g>
+
+  <!-- Highlight circle around found word -->
+  <ellipse cx="25" cy="25" rx="18" ry="6" stroke="#3EB54B" stroke-width="2" fill="none"
+           transform="rotate(-8 25 25)" stroke-linecap="round" opacity="0.8"/>
+</svg>

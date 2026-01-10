@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <!-- Bowl -->
+  <path d="M4 12C4 12 2 14 2 18C2 25 8 29 16 29C24 29 30 25 30 18C30 14 28 12 28 12"
+        stroke="#00562A" stroke-width="2" stroke-linecap="round" fill="none"/>
+  <!-- Steam -->
+  <path d="M11 9C11 9 10 7 11.5 5.5" stroke="#3EB54B" stroke-width="1.5" stroke-linecap="round" opacity="0.7"/>
+  <path d="M16 8C16 8 15 5.5 16.5 4" stroke="#3EB54B" stroke-width="1.5" stroke-linecap="round" opacity="0.7"/>
+  <path d="M21 9C21 9 20 7 21.5 5.5" stroke="#3EB54B" stroke-width="1.5" stroke-linecap="round" opacity="0.7"/>
+  <!-- Letters -->
+  <text x="7" y="19" font-family="monospace" font-weight="700" font-size="5" fill="#01391C">AB</text>
+  <text x="17" y="19" font-family="monospace" font-weight="700" font-size="5" fill="#01391C">C</text>
+  <text x="9" y="25" font-family="monospace" font-weight="700" font-size="5" fill="#01391C">XY</text>
+  <!-- Highlight circle -->
+  <ellipse cx="16" cy="18" rx="11" ry="4" stroke="#3EB54B" stroke-width="1.5" fill="none"
+           transform="rotate(-5 16 18)" opacity="0.8"/>
+</svg>
