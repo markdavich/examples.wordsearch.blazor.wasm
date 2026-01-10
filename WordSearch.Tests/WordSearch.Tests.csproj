@@ -27,6 +27,7 @@
     <ProjectReference Include="..\WordSearch.Domain\WordSearch.Domain.csproj" />
     <ProjectReference Include="..\WordSearch.Application\WordSearch.Application.csproj" />
     <ProjectReference Include="..\WordSearch.Infrastructure\WordSearch.Infrastructure.csproj" />
+    <ProjectReference Include="..\WordSearch.Web\WordSearch.Web.csproj" />
   </ItemGroup>
 
 </Project>

@@ -58,6 +58,10 @@ public class TooltipTests : TestContext
         cut.Markup.Should().Contain("tooltip-popup");
 
         await wrapper.TriggerEventAsync("onmouseleave", new Microsoft.AspNetCore.Components.Web.MouseEventArgs());
+
+        // Wait for the hide timer (300ms) plus a small buffer
+        cut.WaitForState(() => !cut.Markup.Contains("tooltip-popup"), TimeSpan.FromMilliseconds(500));
+
         cut.Markup.Should().NotContain("tooltip-popup");
     }
 

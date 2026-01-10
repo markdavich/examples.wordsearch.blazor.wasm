@@ -202,3 +202,132 @@ Created `PuzzleService` as a singleton service that acts as an event bus:
    - Added h4 styling
 
 **Result:** FileInput now has visible text and matches AIUpload's visual style with gray container and white input area.
+
+---
+
+## Saturday, Jan 11, 2026, 01:42 AM
+
+### Edit 6 - Fix User Guide Link
+
+**Problem:** Clicking "User Guide" in the navbar opened `/guide/` but showed Blazor's "Sorry, there's nothing at this address" instead of the static VitePress documentation.
+
+**Root Cause:** Blazor WebAssembly's SPA router intercepts all URL paths. When requesting `/guide/`, the DevServer falls back to serving the root `index.html`, and Blazor's router shows its NotFound component because there's no `/guide` page route.
+
+**Solution:** Changed the href from `guide/` to `guide/index.html`.
+
+**File Updated:**
+- **`Layout/NavBar.razor`** - Changed User Guide link to explicit file path
+
+**Why This Works:** When requesting a specific file path (`guide/index.html`), the DevServer recognizes it as an existing static file and serves it directly, bypassing Blazor's SPA fallback behavior.
+
+---
+
+## Friday, Jan 10, 2026, 02:10 AM
+
+### Edit 7 - Create Developer Documentation
+
+**Request:** Add comprehensive developer documentation accessible via "Developers" link in navbar.
+
+**Solution:** Created a new VitePress site in `docs-dev/` for developer documentation.
+
+**Files Created:**
+
+1. **`docs-dev/package.json`** - VitePress project configuration
+2. **`docs-dev/.vitepress/config.ts`** - Site configuration with sidebar
+3. **`docs-dev/.vitepress/theme/index.ts`** - Theme entry
+4. **`docs-dev/.vitepress/theme/custom.css`** - ITS brand styling
+
+**Documentation Files:**
+
+- **`index.md`** - Home page with overview and quick links
+- **`architecture.md`** - Architecture overview
+- **`architecture/domain.md`** - Domain layer documentation
+- **`architecture/application.md`** - Application layer documentation
+- **`architecture/infrastructure.md`** - Infrastructure layer documentation
+- **`architecture/web.md`** - Web layer documentation
+- **`api/domain.md`** - Domain types reference (WordSearchPuzzle, Match, GridCoordinate, etc.)
+- **`api/services.md`** - Services reference (WordFinderService, PuzzleService, etc.)
+- **`api/components.md`** - Blazor components reference
+- **`ai/overview.md`** - AI integration overview
+- **`ai/platforms.md`** - Cloud platform documentation (Cloudflare, Vercel)
+- **`ai/services.md`** - AI provider documentation (Groq, Gemini, Together, Cloudflare AI)
+- **`getting-started.md`** - Developer getting started guide
+- **`vitepress.md`** - VitePress site documentation
+
+**Files Updated:**
+
+1. **`Layout/NavBar.razor`** - Added "Developers" link pointing to `dev-guide/index.html`
+
+**Output:** Documentation builds to `WordSearch.Web/wwwroot/dev-guide/`
+
+**Documentation Covers:**
+1. Clean Architecture explanation (all 4 layers with what belongs where)
+2. All classes, interfaces, enums, structs with code examples
+3. AI uploading technology, platforms, and providers
+4. VitePress site setup and customization
+5. Getting started guide (clone, debug, test, deploy)
+
+---
+
+## Friday, Jan 10, 2026, 02:47 AM
+
+### Edit 8 - Improve Test Coverage to 80%+
+
+**Request:** Add tests to achieve 80% test coverage (team standard).
+
+**Previous State:** 59.5% line coverage with 338 tests
+
+**Final State:** 81% line coverage with 416 tests
+
+**Coverage by Assembly:**
+| Assembly | Before | After |
+|----------|--------|-------|
+| WordSearch.Application | 96.7% | 100% |
+| WordSearch.Domain | 100% | 100% |
+| WordSearch.Infrastructure | 58.4% | 100% |
+| WordSearch.Web | 40.2% | 67.3% |
+| **Overall** | **59.5%** | **81%** |
+
+**Test Files Created:**
+
+1. **`WordSearch.Tests/Infrastructure/Services/PuzzleParserApiClientTests.cs`**
+   - 14 tests for HTTP client with mocked HttpMessageHandler
+   - Tests: success, 400/500 errors, network errors, timeouts, invalid JSON, empty responses
+   - Tests platform URL selection (Cloudflare vs Vercel)
+   - Tests IsAvailableAsync health checks
+
+2. **`WordSearch.Tests.Ui/Pages/IndexTests.cs`**
+   - 21 tests for the main Index page
+   - Tests: initial render, puzzle loading, word finder integration
+   - Tests: button interactions (Clear Highlights, Circle Answers)
+   - Tests: word selection, disposal/unsubscription
+
+**Test Files Expanded:**
+
+1. **AIUploadTests.cs** - Expanded from 20 to 28 tests
+   - Platform/provider parameter synchronization
+   - UI element rendering verification
+
+2. **UploadDropdownTests.cs** - Expanded from 12 to 24 tests
+   - Menu open/close on file select and puzzle parse
+   - Platform/provider change propagation to PuzzleService
+   - Focus out delay behavior
+
+3. **WordSearchGridTests.cs** - Expanded from 18 to 35 tests
+   - Circle hover enter/leave events
+   - Cell elevation on hover
+   - Path stroke width and fill opacity changes
+   - SVG dimensions based on grid size
+
+4. **AnswersTests.cs** - Expanded from 14 to 26 tests
+   - ScrollToWord functionality with JS interop verification
+   - Multiple highlighted answers
+   - Long word lists
+   - Special characters in words
+
+**Key Testing Patterns Used:**
+- bUnit `TestContext` for Blazor component testing
+- `Mock<HttpMessageHandler>` with `Protected()` for HTTP mocking
+- `cut.InvokeAsync()` for dispatcher-safe event invocation
+- `WaitForState()` for timer-based behavior testing
+- Type aliases to resolve ambiguous references (`using DomainMatch = ...`)

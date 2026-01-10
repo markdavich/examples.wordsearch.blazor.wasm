@@ -1,0 +1,14 @@
+{
+  "name": "alphabet-soup-dev-docs",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Developer documentation for Alphabet Soup Word Search Solver",
+  "scripts": {
+    "dev": "vitepress dev",
+    "build": "vitepress build",
+    "preview": "vitepress preview"
+  },
+  "devDependencies": {
+    "vitepress": "^1.5.0"
+  }
+}

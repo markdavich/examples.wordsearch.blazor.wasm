@@ -2,13 +2,38 @@ using Bunit;
 using FluentAssertions;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.DependencyInjection;
+using Moq;
+using RichardSzalay.MockHttp;
+using WordSearch.Application.Interfaces;
 using WordSearch.Web.Layout;
+using WordSearch.Web.Services;
 using Xunit;
 
 namespace WordSearch.Tests.Ui.Components;
 
 public class NavBarTests : TestContext
 {
+    public NavBarTests()
+    {
+        // Register required services
+        Services.AddSingleton<PuzzleService>();
+
+        // Register mock HttpClient for ExampleSelector
+        var mockHttp = new MockHttpMessageHandler();
+        mockHttp.Fallback.Respond("text/plain", "test content");
+        var httpClient = mockHttp.ToHttpClient();
+        httpClient.BaseAddress = new Uri("http://localhost/");
+        Services.AddSingleton(httpClient);
+
+        // Register mock services for AIUpload
+        var mockFileConverter = new Mock<IFileConverter>();
+        mockFileConverter.Setup(x => x.IsSupportedFile(It.IsAny<string>())).Returns(true);
+        Services.AddSingleton(mockFileConverter.Object);
+
+        var mockPuzzleParser = new Mock<IPuzzleParserApi>();
+        Services.AddSingleton(mockPuzzleParser.Object);
+    }
+
     [Fact]
     public void NavBar_ShouldRenderTitle()
     {
@@ -31,10 +56,21 @@ public class NavBarTests : TestContext
     {
         var cut = RenderComponent<NavBar>();
 
-        var guideLink = cut.Find("a[href='guide/']");
+        var guideLink = cut.Find("a[href='guide/index.html']");
         guideLink.Should().NotBeNull();
         guideLink.TextContent.Should().Be("User Guide");
         guideLink.GetAttribute("target").Should().Be("_blank");
+    }
+
+    [Fact]
+    public void NavBar_ShouldRenderDevelopersLink()
+    {
+        var cut = RenderComponent<NavBar>();
+
+        var devLink = cut.Find("a[href='dev-guide/index.html']");
+        devLink.Should().NotBeNull();
+        devLink.TextContent.Should().Be("Developers");
+        devLink.GetAttribute("target").Should().Be("_blank");
     }
 
     [Fact]
@@ -44,29 +80,6 @@ public class NavBarTests : TestContext
 
         cut.Markup.Should().Contain("About");
         cut.Markup.Should().Contain("/about");
-    }
-
-    [Fact]
-    public void NavBar_ShouldHaveWordSearchLink_WhenNotOnHomePage()
-    {
-        var navManager = Services.GetRequiredService<NavigationManager>();
-        navManager.NavigateTo("/about");
-
-        var cut = RenderComponent<NavBar>();
-
-        cut.Markup.Should().Contain("Word Search");
-    }
-
-    [Fact]
-    public void NavBar_ShouldNotHaveWordSearchLink_WhenOnHomePage()
-    {
-        var cut = RenderComponent<NavBar>();
-
-        // Default navigation is to root "/"
-        // Word Search link should not appear on home page
-        var links = cut.FindAll("a").Select(a => a.TextContent).ToList();
-        // The NavLink to "/" with text "Word Search" should not be present
-        cut.Markup.Should().NotContain(">Word Search</a>");
     }
 
     [Fact]
@@ -88,29 +101,56 @@ public class NavBarTests : TestContext
     }
 
     [Fact]
-    public void NavBar_ShouldRenderLinks_InNavbarLinksSpan()
+    public void NavBar_ShouldRenderLinks_InNavbarLinksSection()
     {
         var cut = RenderComponent<NavBar>();
 
         var linksSection = cut.Find(".navbar-links");
         linksSection.InnerHtml.Should().Contain("User Guide");
+        linksSection.InnerHtml.Should().Contain("Developers");
         linksSection.InnerHtml.Should().Contain("About");
     }
 
     [Fact]
-    public void NavBar_ShouldUpdateCurrentPath_OnNavigation()
+    public void NavBar_ShouldRenderUploadDropdown()
     {
         var cut = RenderComponent<NavBar>();
-        var navManager = Services.GetRequiredService<NavigationManager>();
 
-        // Initially on home page
-        cut.Markup.Should().NotContain(">Word Search</a>");
+        cut.Find(".upload-dropdown").Should().NotBeNull();
+    }
 
-        // Navigate to about page
-        navManager.NavigateTo("/about");
-        cut.Render();
+    [Fact]
+    public void NavBar_ShouldRenderExampleSelector()
+    {
+        var cut = RenderComponent<NavBar>();
 
-        // Now Word Search link should appear
-        cut.Markup.Should().Contain("Word Search");
+        cut.Find(".example-select").Should().NotBeNull();
+    }
+
+    [Fact]
+    public void NavBar_ShouldRenderLogoLink()
+    {
+        var cut = RenderComponent<NavBar>();
+
+        var logoLink = cut.Find(".navbar-logo-link");
+        logoLink.Should().NotBeNull();
+        logoLink.GetAttribute("href").Should().Be("/");
+    }
+
+    [Fact]
+    public void NavBar_ShouldRenderSvgLogo()
+    {
+        var cut = RenderComponent<NavBar>();
+
+        var logo = cut.Find(".navbar-logo");
+        logo.Should().NotBeNull();
+    }
+
+    [Fact]
+    public void NavBar_ShouldHaveBrandSection()
+    {
+        var cut = RenderComponent<NavBar>();
+
+        cut.Find(".navbar-brand").Should().NotBeNull();
     }
 }
