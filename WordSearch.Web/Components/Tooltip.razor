@@ -8,7 +8,8 @@
     @ChildContent
     @if (_visible)
     {
-        <div class="tooltip-popup @PositionClass @_adjustedPositionClass"
+        <div class="tooltip-popup @_positionClass"
+             style="@_positionStyle"
              @onmouseenter="CancelHideTimer"
              @onmouseleave="StartHideTimer">
             <div class="tooltip-content">
@@ -27,6 +28,10 @@
 </div>
 
 @code {
+    private const int TooltipWidth = 260;
+    private const int TooltipHeight = 120; // Approximate height
+    private const int Offset = 10;
+
     [Parameter] public RenderFragment? ChildContent { get; set; }
     [Parameter] public string Title { get; set; } = "";
     [Parameter] public string Description { get; set; } = "";
@@ -36,13 +41,12 @@
     private bool _visible;
     private System.Timers.Timer? _hideTimer;
     private ElementReference _wrapperRef;
-    private string _adjustedPositionClass = "";
-
-    private string PositionClass => $"tooltip-{Position}";
+    private string _positionClass = "";
+    private string _positionStyle = "";
 
     protected override void OnInitialized()
     {
-        _hideTimer = new System.Timers.Timer(300); // 300ms delay before hiding
+        _hideTimer = new System.Timers.Timer(300);
         _hideTimer.AutoReset = false;
         _hideTimer.Elapsed += async (s, e) => await HideTooltip();
     }
@@ -51,48 +55,72 @@
     {
         CancelHideTimer();
         _visible = true;
-
-        // Check if tooltip would go off screen and adjust
-        await Task.Delay(10); // Small delay to let DOM render
-        await AdjustPosition();
+        await CalculateFixedPosition();
     }
 
-    private async Task AdjustPosition()
+    private async Task CalculateFixedPosition()
     {
         try
         {
             var bounds = await JS.InvokeAsync<BoundingRect>("getTooltipBounds", _wrapperRef);
-            if (bounds != null)
+            if (bounds == null) return;
+
+            var centerX = (bounds.Left + bounds.Right) / 2;
+            var centerY = (bounds.Top + bounds.Bottom) / 2;
+
+            // Determine actual position (may flip if would go off screen)
+            var actualPosition = Position;
+
+            // Check if preferred position would go off screen and flip if needed
+            if (Position == "top" && bounds.Top < TooltipHeight + Offset)
+                actualPosition = "bottom";
+            else if (Position == "bottom" && bounds.Bottom > bounds.WindowHeight - TooltipHeight - Offset)
+                actualPosition = "top";
+            else if (Position == "left" && bounds.Left < TooltipWidth + Offset)
+                actualPosition = "right";
+            else if (Position == "right" && bounds.Right > bounds.WindowWidth - TooltipWidth - Offset)
+                actualPosition = "left";
+
+            // Calculate fixed position based on actual position
+            double top = 0, left = 0;
+
+            switch (actualPosition)
             {
-                _adjustedPositionClass = "";
-
-                // Check if tooltip would go off the right edge
-                if (Position == "right" && bounds.Right > bounds.WindowWidth - 280)
-                {
-                    _adjustedPositionClass = "tooltip-flip-left";
-                }
-                // Check if tooltip would go off the left edge
-                else if (Position == "left" && bounds.Left < 280)
-                {
-                    _adjustedPositionClass = "tooltip-flip-right";
-                }
-                // Check if tooltip would go off the top
-                else if (Position == "top" && bounds.Top < 150)
-                {
-                    _adjustedPositionClass = "tooltip-flip-bottom";
-                }
-                // Check if tooltip would go off the bottom
-                else if (Position == "bottom" && bounds.Bottom > bounds.WindowHeight - 150)
-                {
-                    _adjustedPositionClass = "tooltip-flip-top";
-                }
-
-                StateHasChanged();
+                case "top":
+                    top = bounds.Top - Offset;
+                    left = centerX - (TooltipWidth / 2);
+                    break;
+                case "bottom":
+                    top = bounds.Bottom + Offset;
+                    left = centerX - (TooltipWidth / 2);
+                    break;
+                case "left":
+                    top = centerY;
+                    left = bounds.Left - TooltipWidth - Offset;
+                    break;
+                case "right":
+                    top = centerY;
+                    left = bounds.Right + Offset;
+                    break;
             }
+
+            // Clamp to screen bounds
+            left = Math.Max(8, Math.Min(left, bounds.WindowWidth - TooltipWidth - 8));
+            if (actualPosition == "top")
+                top = Math.Max(8, top);
+            else if (actualPosition == "bottom")
+                top = Math.Min(top, bounds.WindowHeight - TooltipHeight - 8);
+
+            _positionClass = $"tooltip-{actualPosition}";
+            _positionStyle = $"top: {top.ToString(System.Globalization.CultureInfo.InvariantCulture)}px; left: {left.ToString(System.Globalization.CultureInfo.InvariantCulture)}px;";
+
+            StateHasChanged();
         }
         catch
         {
-            // JS interop not available, use default position
+            // Fallback - no positioning
+            _positionClass = $"tooltip-{Position}";
+            _positionStyle = "";
         }
     }
 
@@ -110,7 +138,8 @@
     private async Task HideTooltip()
     {
         _visible = false;
-        _adjustedPositionClass = "";
+        _positionClass = "";
+        _positionStyle = "";
         await InvokeAsync(StateHasChanged);
     }
 
