@@ -1,29 +1,16 @@
 .grid-container {
-    background: var(--its-white, #fff);
-    border-radius: var(--radius-md, 8px);
-    padding: var(--space-md, 1rem);
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 1rem;
     min-height: 400px;
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: var(--shadow-sm, 0 1px 3px rgba(0, 86, 42, 0.08));
-    border: 1px solid var(--its-gray-200, #e8eeea);
 }
 
 .grid-placeholder {
     text-align: center;
-    color: var(--its-gray-500, #6b7d72);
-    font-style: italic;
-}
-
-.grid-placeholder::before {
-    content: '';
-    display: block;
-    width: 80px;
-    height: 80px;
-    margin: 0 auto var(--space-md, 1rem) auto;
-    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2300562A' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='3' y='3' width='7' height='7'/%3E%3Crect x='14' y='3' width='7' height='7'/%3E%3Crect x='14' y='14' width='7' height='7'/%3E%3Crect x='3' y='14' width='7' height='7'/%3E%3C/svg%3E") no-repeat center;
-    opacity: 0.3;
+    color: #666;
 }
 
 .grid-wrapper {
@@ -51,10 +38,9 @@
 .letter-grid {
     display: grid;
     gap: 0;
-    border-radius: var(--radius-sm, 4px);
-    border: 2px solid var(--its-green-primary, #00562A);
-    background: var(--its-white, #fff);
-    box-shadow: var(--shadow-md, 0 4px 12px rgba(0, 86, 42, 0.1));
+    border-radius: 5px;
+    border: solid #ddd 1px;
+    background: white;
 }
 
 .grid-cell {
@@ -63,25 +49,17 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    font-family: var(--font-mono, 'SF Mono', 'Consolas', monospace);
-    font-size: 1.4em;
-    font-weight: 500;
-    color: var(--its-black, #1A1A1A);
-    border: 1px solid var(--its-gray-200, #e8eeea);
+    font-family: monospace;
+    font-size: 1.5em;
+    border: solid rgba(223, 223, 223, 0.472) 1px;
     border-right: none;
     border-bottom: none;
-    transition: all var(--transition-fast, 150ms ease);
+    transition: background-color 0.2s;
     user-select: none;
-    background: var(--its-white, #fff);
-}
-
-.grid-cell:hover {
-    background: var(--its-gray-100, #f7f9f8);
 }
 
 .grid-cell.highlighted {
     font-weight: bold;
-    color: var(--its-green-dark, #01391C);
 }
 
 .grid-cell.elevated {
