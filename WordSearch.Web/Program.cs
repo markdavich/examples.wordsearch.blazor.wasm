@@ -5,6 +5,7 @@ using WordSearch.Application.Services;
 using WordSearch.Infrastructure.Configuration;
 using WordSearch.Infrastructure.Services;
 using WordSearch.Web;
+using WordSearch.Web.Services;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
@@ -26,5 +27,8 @@ builder.Services.AddScoped<IWordFinder, WordFinderService>();
 // Register Infrastructure services
 builder.Services.AddScoped<IFileConverter, FileConverterService>();
 builder.Services.AddScoped<IPuzzleParserApi, PuzzleParserApiClient>();
+
+// Register Web services
+builder.Services.AddSingleton<PuzzleService>();
 
 await builder.Build().RunAsync();

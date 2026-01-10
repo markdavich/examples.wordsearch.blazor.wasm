@@ -1,4 +1,5 @@
 @using Microsoft.AspNetCore.Components.Routing
+@using WordSearch.Web.Components
 
 <nav class="navbar">
     <div class="navbar-brand">
@@ -20,11 +21,9 @@
         <a href="/" class="navbar-title">Alphabet Soup</a>
     </div>
     <div class="navbar-links">
+        <UploadDropdown />
+        <ExampleSelector />
         <a href="guide/" target="_blank" class="navbar-link">User Guide</a>
         <NavLink href="/about" class="navbar-link">About</NavLink>
     </div>
 </nav>
-
-@code {
-    // No dynamic behavior needed - navbar is static
-}

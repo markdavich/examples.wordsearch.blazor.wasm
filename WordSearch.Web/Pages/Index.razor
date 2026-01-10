@@ -3,46 +3,45 @@
 @using WordSearch.Domain.Entities
 @using WordSearch.Domain.ValueObjects
 @using WordSearch.Web.Components
+@using WordSearch.Web.Services
+@implements IDisposable
 
-<div class="word-search-container">
-    <div class="left-column">
-        <FileInput OnFileSelected="HandleFileSelected" Label="Word Search File" />
+@inject PuzzleService PuzzleService
 
-        <AIUpload
-            OnPuzzleParsed="HandlePuzzleParsed"
-            Platform="@_selectedPlatform"
-            AiProvider="@_selectedAiProvider"
-            OnPlatformChanged="HandlePlatformChanged"
-            OnAiProviderChanged="HandleAiProviderChanged" />
+<div class="content-container">
+    <div class="left-panel">
+        <div class="controls-column">
+            <div class="button-row">
+                <Tooltip Title="Clear Highlights"
+                         Description="Remove all colored highlighting from the grid and reset selections."
+                         GuideLink="guide/features.html#clear-highlights"
+                         Position="bottom">
+                    <button class="action-btn" @onclick="ClearHighlights">Clear Highlights</button>
+                </Tooltip>
+                <Tooltip Title="Circle Answers"
+                         Description="Toggle stadium-shaped circles around all found words. Hover over circles to highlight individual answers."
+                         GuideLink="guide/features.html#circle-overlay"
+                         Position="bottom">
+                    <button class="action-btn" @onclick="ToggleCircles">Circle Answers</button>
+                </Tooltip>
+            </div>
 
-        <div class="button-row">
-            <Tooltip Title="Clear Highlights"
-                     Description="Remove all colored highlighting from the grid and reset selections."
-                     GuideLink="guide/features.html#clear-highlights"
-                     Position="bottom">
-                <button class="action-btn" @onclick="ClearHighlights">Clear Highlights</button>
-            </Tooltip>
-            <Tooltip Title="Circle Answers"
-                     Description="Toggle stadium-shaped circles around all found words. Hover over circles to highlight individual answers."
-                     GuideLink="guide/features.html#circle-overlay"
-                     Position="bottom">
-                <button class="action-btn" @onclick="ToggleCircles">Circle Answers</button>
-            </Tooltip>
+            <WordsToFind
+                Words="@_words"
+                SelectedWord="@_selectedWord"
+                OnWordSelected="HandleWordSelected" />
         </div>
 
-        <WordsToFind
-            Words="@_words"
-            SelectedWord="@_selectedWord"
-            OnWordSelected="HandleWordSelected" />
-
-        <Answers
-            Matches="@_matches"
-            HighlightedAnswers="@_highlightedAnswers"
-            ScrollToWord="@_selectedWord"
-            OnAnswerSelected="HandleAnswerSelected" />
+        <div class="answers-column">
+            <Answers
+                Matches="@_matches"
+                HighlightedAnswers="@_highlightedAnswers"
+                ScrollToWord="@_selectedWord"
+                OnAnswerSelected="HandleAnswerSelected" />
+        </div>
     </div>
 
-    <div class="right-column">
+    <div class="grid-panel">
         <WordSearchGrid
             Letters="@_letters"
             HighlightedCells="@_highlightedCells"
@@ -60,8 +59,6 @@
     private List<Match> _matches = new();
     private Dictionary<string, string> _normalizedToOriginal = new();
     private string? _selectedWord;
-    private string _selectedPlatform = "cloudflare";
-    private string _selectedAiProvider = "groq";
     private Dictionary<string, string> _highlightedAnswers = new();
     private List<HighlightedCell> _highlightedCells = new();
     private bool _showCircles = false;
@@ -74,7 +71,17 @@
         "#1DD1A1", "#5F27CD", "#FF6B9D", "#00D2D3"
     };
 
-    private void HandleFileSelected(string content)
+    protected override void OnInitialized()
+    {
+        PuzzleService.OnPuzzleLoaded += HandlePuzzleLoaded;
+    }
+
+    public void Dispose()
+    {
+        PuzzleService.OnPuzzleLoaded -= HandlePuzzleLoaded;
+    }
+
+    private void HandlePuzzleLoaded(string content)
     {
         try
         {
@@ -96,30 +103,12 @@
 
             ClearHighlights();
             _circleData = BuildCircleData();
+            StateHasChanged();
         }
         catch (Exception ex)
         {
             Console.WriteLine($"Error parsing file: {ex.Message}");
         }
-    }
-
-    private void HandlePuzzleParsed(string content)
-    {
-        HandleFileSelected(content);
-    }
-
-    private void HandlePlatformChanged(string platform)
-    {
-        _selectedPlatform = platform;
-        if (platform != "cloudflare" && _selectedAiProvider == "cloudflare-ai")
-        {
-            _selectedAiProvider = "groq";
-        }
-    }
-
-    private void HandleAiProviderChanged(string provider)
-    {
-        _selectedAiProvider = provider;
     }
 
     private void HandleWordSelected(string word)

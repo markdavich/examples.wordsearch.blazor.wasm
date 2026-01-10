@@ -1,8 +1,9 @@
 .answers-container {
-    background: #f8f9fa;
-    border-radius: 8px;
-    padding: 1rem;
+    background: var(--its-surface-sunken);
+    border-radius: var(--its-radius-md);
+    padding: var(--f-space-4);
     flex: 1;
+    width: 100%;
     min-height: 0;
     overflow-y: auto;
     display: flex;
@@ -28,7 +29,7 @@
     flex-direction: column;
     gap: 0.5rem;
     flex: 1;
-    overflow-y: auto;
+    overflow: auto;
 }
 
 .answer-item {
@@ -42,6 +43,8 @@
     justify-content: space-between;
     align-items: center;
     transition: all 0.2s;
+    width: 100%;
+    white-space: nowrap;
 }
 
 .answer-item:hover {
@@ -60,4 +63,6 @@
     font-size: 0.75rem;
     color: #666;
     font-family: monospace;
+    white-space: nowrap;
+    flex-shrink: 0;
 }

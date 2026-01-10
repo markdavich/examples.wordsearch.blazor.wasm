@@ -1,8 +1,10 @@
 .words-to-find-container {
-    background: #f8f9fa;
-    border-radius: 8px;
-    padding: 1rem;
-    margin-bottom: 1rem;
+    background: var(--its-surface-sunken);
+    border-radius: var(--its-radius-md);
+    padding: var(--f-space-4);
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
 }
 
 .words-to-find-container h4 {

@@ -1,47 +1,32 @@
 .file-input-container {
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
-    margin-bottom: 1rem;
+    gap: var(--f-space-2);
 }
 
 .file-input-label {
-    font-weight: 600;
-    color: #333;
-}
-
-.file-input-row {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    flex-wrap: wrap;
+    font-weight: var(--f-weight-semibold);
+    color: var(--its-text-default);
 }
 
 .file-input {
-    flex: 1;
-    min-width: 120px;
-    padding: 0.5rem;
-    border: 2px dashed #ccc;
-    border-radius: 4px;
+    width: 100%;
+    padding: var(--f-space-2);
+    border: 2px dashed var(--its-border-default);
+    border-radius: var(--its-radius-sm);
     cursor: pointer;
 }
 
 .file-input:hover {
-    border-color: #1b6ec2;
-}
-
-.or-separator {
-    color: #666;
-    font-size: 0.875rem;
-    font-style: italic;
+    border-color: var(--its-primary-border);
 }
 
 .file-name {
-    font-size: 0.875rem;
-    color: #666;
+    font-size: var(--f-text-sm);
+    color: var(--its-text-subtle);
 }
 
 .file-error {
-    font-size: 0.875rem;
-    color: #dc3545;
+    font-size: var(--f-text-sm);
+    color: var(--its-error-text);
 }

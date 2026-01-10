@@ -2,19 +2,12 @@
 
 <div class="file-input-container">
     <label class="file-input-label">@Label</label>
-    <div class="file-input-row">
-        <Tooltip Title="Upload Puzzle File"
-                 Description="Select a .txt or .wordsearch file containing the letter grid and word list."
-                 GuideLink="guide/file-format.html"
-                 Position="bottom">
-            <InputFile OnChange="HandleFileChange" accept=".wordsearch,.txt" class="file-input" />
-        </Tooltip>
-        <span class="or-separator">or</span>
-        <ExampleSelector
-            OnExampleLoaded="HandleExampleLoaded"
-            OnError="HandleError"
-            OnFileNameChanged="HandleFileNameChanged" />
-    </div>
+    <Tooltip Title="Upload Puzzle File"
+             Description="Select a .txt or .wordsearch file containing the letter grid and word list."
+             GuideLink="guide/file-format.html"
+             Position="bottom">
+        <InputFile OnChange="HandleFileChange" accept=".wordsearch,.txt" class="file-input" />
+    </Tooltip>
     @if (!string.IsNullOrEmpty(_fileName))
     {
         <span class="file-name">@_fileName</span>
@@ -53,22 +46,5 @@
             _error = $"Error reading file: {ex.Message}";
             Console.WriteLine(_error);
         }
-    }
-
-    private async Task HandleExampleLoaded(string content)
-    {
-        _error = null;
-        await OnFileSelected.InvokeAsync(content);
-    }
-
-    private void HandleFileNameChanged(string fileName)
-    {
-        _fileName = fileName;
-    }
-
-    private void HandleError(string error)
-    {
-        _error = error;
-        Console.WriteLine(_error);
     }
 }

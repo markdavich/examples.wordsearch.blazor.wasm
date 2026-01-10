@@ -1,0 +1,77 @@
+@using WordSearch.Web.Services
+
+@inject PuzzleService PuzzleService
+
+<div class="upload-dropdown" @onfocusout="HandleFocusOut" tabindex="-1">
+    <button class="upload-dropdown-trigger" @onclick="ToggleDropdown" @onclick:stopPropagation="true">
+        <svg class="upload-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+            <polyline points="17 8 12 3 7 8"/>
+            <line x1="12" y1="3" x2="12" y2="15"/>
+        </svg>
+        Upload
+        <svg class="dropdown-arrow @(_isOpen ? "open" : "")" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="6 9 12 15 18 9"/>
+        </svg>
+    </button>
+
+    @if (_isOpen)
+    {
+        <div class="upload-dropdown-menu" @onclick:stopPropagation="true">
+            <FileInput OnFileSelected="HandleFileSelected" Label="Word Search File" />
+
+            <div class="dropdown-divider"></div>
+
+            <AIUpload
+                OnPuzzleParsed="HandlePuzzleParsed"
+                Platform="@PuzzleService.SelectedPlatform"
+                AiProvider="@PuzzleService.SelectedAiProvider"
+                OnPlatformChanged="HandlePlatformChanged"
+                OnAiProviderChanged="HandleAiProviderChanged" />
+        </div>
+    }
+</div>
+
+@code {
+    private bool _isOpen;
+
+    private void ToggleDropdown()
+    {
+        _isOpen = !_isOpen;
+    }
+
+    private void HandleFocusOut(FocusEventArgs e)
+    {
+        // Delay to allow click events inside dropdown to process
+        _ = CloseAfterDelay();
+    }
+
+    private async Task CloseAfterDelay()
+    {
+        await Task.Delay(200);
+        _isOpen = false;
+        StateHasChanged();
+    }
+
+    private void HandleFileSelected(string content)
+    {
+        PuzzleService.LoadPuzzle(content);
+        _isOpen = false;
+    }
+
+    private void HandlePuzzleParsed(string content)
+    {
+        PuzzleService.LoadPuzzle(content);
+        _isOpen = false;
+    }
+
+    private void HandlePlatformChanged(string platform)
+    {
+        PuzzleService.SetPlatform(platform);
+    }
+
+    private void HandleAiProviderChanged(string provider)
+    {
+        PuzzleService.SetAiProvider(provider);
+    }
+}

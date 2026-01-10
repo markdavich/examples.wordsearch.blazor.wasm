@@ -1,11 +1,13 @@
+@using WordSearch.Web.Services
 @inject HttpClient Http
+@inject PuzzleService PuzzleService
 
 <Tooltip Title="Load Example"
          Description="Choose from pre-loaded example puzzles to see how the solver works."
          GuideLink="guide/getting-started.html#select-an-example"
          Position="bottom">
-    <select class="example-select" @onchange="HandleExampleSelected">
-        <option value="">Load Example...</option>
+    <select class="example-select" @onchange="HandleExampleSelected" value="">
+        <option value="">Examples...</option>
         @foreach (var example in ExampleFiles)
         {
             <option value="@example.Path">@example.Name</option>
@@ -14,10 +16,6 @@
 </Tooltip>
 
 @code {
-    [Parameter] public EventCallback<string> OnExampleLoaded { get; set; }
-    [Parameter] public EventCallback<string> OnError { get; set; }
-    [Parameter] public EventCallback<string> OnFileNameChanged { get; set; }
-
     private static readonly List<(string Name, string Path)> ExampleFiles = new()
     {
         ("Ai", "assets/Ai.txt"),
@@ -37,13 +35,11 @@
         try
         {
             var content = await Http.GetStringAsync(path);
-            var fileName = Path.GetFileName(path);
-            await OnFileNameChanged.InvokeAsync(fileName);
-            await OnExampleLoaded.InvokeAsync(content);
+            PuzzleService.LoadPuzzle(content);
         }
         catch (Exception ex)
         {
-            await OnError.InvokeAsync($"Error loading example: {ex.Message}");
+            Console.WriteLine($"Error loading example: {ex.Message}");
         }
     }
 }

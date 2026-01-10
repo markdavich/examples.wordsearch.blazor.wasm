@@ -1,7 +1,8 @@
 @using WordSearch.Domain.ValueObjects
 @using static WordSearch.Web.Pages.Index
+@inject IJSRuntime JS
 
-<div class="grid-container">
+<div class="grid-container" @ref="_containerRef">
     @if (Letters == null)
     {
         <div class="grid-placeholder">
@@ -10,7 +11,7 @@
     }
     else
     {
-        <div class="grid-wrapper">
+        <div class="grid-wrapper" style="@GetScaleStyle()">
             <div class="letter-grid" style="grid-template-columns: repeat(@GetCols(), 1fr);">
                 @for (var row = 0; row < GetRows(); row++)
                 {
@@ -62,9 +63,63 @@
     [Parameter] public EventCallback<string?> OnCircleHover { get; set; }
 
     private string? _hoveredCircle;
+    private ElementReference _containerRef;
+    private double _scale = 1.0;
+    private char[,]? _previousLetters;
 
     private int GetRows() => Letters?.GetLength(0) ?? 0;
     private int GetCols() => Letters?.GetLength(1) ?? 0;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (Letters != null && (firstRender || Letters != _previousLetters))
+        {
+            _previousLetters = Letters;
+            await CalculateScale();
+        }
+    }
+
+    private async Task CalculateScale()
+    {
+        try
+        {
+            var size = await JS.InvokeAsync<ElementSize>("getElementSize", _containerRef);
+            if (size == null) return;
+
+            var gridWidth = GetCols() * CellSize;
+            var gridHeight = GetRows() * CellSize;
+
+            // Add some padding to the container measurement
+            var availableWidth = size.Width - 32;  // Account for padding
+            var availableHeight = size.Height - 32;
+
+            if (gridWidth <= 0 || gridHeight <= 0) return;
+
+            var scaleX = availableWidth / gridWidth;
+            var scaleY = availableHeight / gridHeight;
+
+            // Use the smaller scale to fit both dimensions, but never scale up
+            var newScale = Math.Min(Math.Min(scaleX, scaleY), 1.0);
+
+            if (Math.Abs(newScale - _scale) > 0.01)
+            {
+                _scale = newScale;
+                StateHasChanged();
+            }
+        }
+        catch
+        {
+            // Ignore JS interop errors during prerendering
+        }
+    }
+
+    private string GetScaleStyle()
+    {
+        if (_scale >= 0.99) return "";
+        return $"transform: scale({_scale.ToString(System.Globalization.CultureInfo.InvariantCulture)}); transform-origin: top left;";
+    }
+
+    private record ElementSize(double Width, double Height);
 
     private string? GetHighlightColor(int row, int col)
     {
